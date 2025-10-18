@@ -109,6 +109,7 @@ dependencies {
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation ("org.postgresql:postgresql:42.6.0")
 
+
 }
 
 tasks.withType<Test> {
