@@ -50,10 +50,4 @@ public class Cliente extends Persona{
     @Comment("Carrito de Compra único del Cliente")
     private CarritoCompra carritoCompra;
 
-    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Comment("Lista de notificaciones asociadas al cliente.")
-    private List<Notificacion> notificaciones;
-
-
-
 }
