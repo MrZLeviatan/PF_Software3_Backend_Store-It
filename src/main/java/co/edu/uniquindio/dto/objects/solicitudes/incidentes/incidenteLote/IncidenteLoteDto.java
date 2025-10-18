@@ -5,7 +5,7 @@ import co.edu.uniquindio.models.enums.entities.TipoIncidenteLote;
 
 public record IncidenteLoteDto(
 
-        IncidenteDto incidenteDto,
+        IncidenteDto incidente,
         Long idLote,
         Double valorDaniosPropiedad,
         TipoIncidenteLote tipoIncidenteLote

@@ -9,7 +9,7 @@ import java.util.List;
 public record AdminBodegaDto(
 
 
-        PersonaDto personaDto,
+        PersonaDto persona,
         DatosLaboralesDto datosLaborales,
         List<ResolucionDto> resoluciones
 

@@ -12,7 +12,7 @@ import java.util.List;
 public record ClienteDto(
 
 
-        PersonaDto personaDto,
+        PersonaDto persona,
         // Tipo de cliente, ya sea NATURAL o JURIDICO.
         TipoCliente tipoCliente,
         // Número de identificación tributaria, relevante para clientes jurídicos.

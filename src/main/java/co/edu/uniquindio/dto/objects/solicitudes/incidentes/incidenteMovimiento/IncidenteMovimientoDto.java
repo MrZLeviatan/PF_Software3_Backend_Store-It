@@ -5,7 +5,7 @@ import co.edu.uniquindio.models.enums.entities.TipoIncidenteMovimiento;
 
 public record IncidenteMovimientoDto(
 
-        IncidenteDto incidenteDto,
+        IncidenteDto incidente,
         Long idMovimiento,
         Long idProveedor,
         Long idPersonalBodega,

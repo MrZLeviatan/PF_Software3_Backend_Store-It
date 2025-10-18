@@ -4,7 +4,7 @@ import co.edu.uniquindio.dto.objects.inventario.movimiento.MovimientoDto;
 
 public record MovimientoRetiroDto(
 
-        MovimientoDto movimientoDto,
+        MovimientoDto movimiento,
         Long idCliente,
         Long idDocumentoRetiro,
         Long idDetalleCompra

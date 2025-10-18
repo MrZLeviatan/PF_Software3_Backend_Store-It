@@ -10,7 +10,7 @@ import java.util.List;
 
 public record GestorComercialDto(
 
-        PersonaDto personaDto,
+        PersonaDto persona,
         DatosLaboralesDto datosLaborales,
         List<SolicitudDto> solicitudes,
         List<MovimientoRetiroDto> movimientoRetiro,

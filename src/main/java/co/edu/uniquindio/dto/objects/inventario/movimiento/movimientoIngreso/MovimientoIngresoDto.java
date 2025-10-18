@@ -6,7 +6,7 @@ import co.edu.uniquindio.models.enums.entities.EstadoMovimientoIngreso;
 public record MovimientoIngresoDto(
 
 
-        MovimientoDto movimientoDto,
+        MovimientoDto movimiento,
         Long idProveedor,
         Long idDocumentoIngreso,
         EstadoMovimientoIngreso estadoMovimientoIngreso
