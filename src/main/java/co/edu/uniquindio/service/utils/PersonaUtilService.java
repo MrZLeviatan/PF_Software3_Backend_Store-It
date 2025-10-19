@@ -19,6 +19,8 @@ public interface PersonaUtilService {
     Persona buscarPersonaPorEmail(String email)
             throws ElementoNoEncontradoException;
 
+    Persona buscarPersonaPorId(Long id) throws ElementoNoEncontradoException;
+
     // Persiste una entidad Persona en la base de datos.
     void guardarPersonaBD(Persona persona);
 

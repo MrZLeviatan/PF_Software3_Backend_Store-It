@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/solicitud")
 @RequiredArgsConstructor
@@ -24,6 +26,12 @@ public class SolicitudController {
     }
 
 
+    @GetMapping("/listar")
+    public ResponseEntity<MensajeDto<List<SolicitudDto>>> obtenerSolicitudes() {
+
+        List<SolicitudDto> solicitudDtos = solicitudService.obtenerSolicitudes();
+        return ResponseEntity.ok().body(new MensajeDto<>(false,solicitudDtos));
+    }
 
 
 

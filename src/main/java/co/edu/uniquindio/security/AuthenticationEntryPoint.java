@@ -37,7 +37,7 @@ public class AuthenticationEntryPoint implements org.springframework.security.we
 
         // Se configura la respuesta HTTP para que sea de tipo JSON y con estado 403 (Prohibido)
         response.setContentType("application/json");
-        response.setStatus(403); // Código HTTP 403 - Forbidden
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
         // Se escribe el objeto JSON en la respuesta utilizando Jackson
         response.getWriter().write(new ObjectMapper().writeValueAsString(dto));

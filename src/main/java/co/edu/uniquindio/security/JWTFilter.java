@@ -47,15 +47,25 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // Se intenta extraer el token del encabezado "Authorization"
         String token = getToken(request);
+        String requestURI = request.getRequestURI();
 
-        // Si no hay token, se permite el paso sin establecer autenticación (flujo anónimo)
-        if (token == null) {
+        System.out.println("🔹 [JWTFilter] URL: " + request.getRequestURI()); // 🇺🇸/🇪🇸 Show request being filtered
+
+
+        if (requestURI.startsWith("/api/auth/") ||
+                requestURI.startsWith("/api/store-it/")){
+
             chain.doFilter(request, response);
-            return;}
+            return;
+        }
 
         try {
             // Se valida el token JWT y se obtiene su contenido (payload)
             Jws<Claims> payload = jwtUtil.parseJwt(token);
+
+            System.out.println("✅ [JWTFilter] Token validated successfully for user: "
+                    + payload.getPayload().getSubject());
+
             String username = payload.getPayload().getSubject(); // Nombre Usuario
             String role = payload.getPayload().get("rol", String.class); // Rol del usuario
 
@@ -90,8 +100,12 @@ public class JWTFilter extends OncePerRequestFilter {
             }
 
         } catch (Exception e) {
+
+            System.err.println("❌ [JWTFilter] Token error: " + e.getMessage());
+
             // Si hay algún error con el token (expirado, mal formado, inválido), se retorna una respuesta 401
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+
             return;}
 
         // Si todo está correcto, se continúa con la cadena de filtros.

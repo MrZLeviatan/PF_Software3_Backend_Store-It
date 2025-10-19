@@ -27,6 +27,9 @@ public interface ClienteService {
             throws ElementoNoEncontradoException, ElementoIncorrectoException, ElementoNoCoincideException;
 
 
+    void verificacionClienteLink(String email, String codigo)
+            throws ElementoNoEncontradoException, ElementoIncorrectoException, ElementoNoCoincideException;
+
 
 
 }

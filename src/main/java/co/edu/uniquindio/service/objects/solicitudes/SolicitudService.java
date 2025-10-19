@@ -25,5 +25,8 @@ public interface SolicitudService {
     List<SolicitudDto> obtenerSolicitudesGestor(Long idGestor)
             throws ElementoNoEncontradoException;
 
+    List<SolicitudDto> obtenerSolicitudes();
+
+
 
 }

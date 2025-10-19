@@ -39,26 +39,17 @@ public class SecurityConfig {
         // Configura la seguridad de la aplicación
 
         http
-                //  Desactiva CSRF (se usa JWT )
+                //  Desactiva CSRF (se usa JWT
                 .csrf(AbstractHttpConfigurer::disable)
-                // Desactiva CSRF solo para WebSocket (evita bloqueos STOMP)
-                .csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**", "/topic/**", "/app/**"))
                 //  Habilita CORS con configuración previa
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // Define sesiones sin estado (stateless)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Permitir el acceso a los endpoints WebSocket y rutas públicas
-                .authorizeHttpRequests(auth -> auth
-                        // Websockets Permitidos
-
-                        // --- ENDPOINTS WEBSOCKET (permitidos) ---
-                        .requestMatchers("/ws/**", "/topic/**", "/app/**").permitAll()
-
-                        // --- DOCUMENTACIÓN PÚBLICA ---
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-
-                        // ---  ENDPOINTS PÚBLICOS ---
-                        .requestMatchers("/api/auth/**", "/api/store-it/**").permitAll()
+                // Reglas de acceso por endpoint y rol
+                .authorizeHttpRequests(req -> req
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Docs públicas
+                        .requestMatchers("/api/auth/**").permitAll() // Login/registro públicos
+                        .requestMatchers("/api/store-it/**").permitAll() // Público store-it
 
                         // --- ENDPOINTS USADOS POR TODOS LOS EMPLEADOS ---
                         .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**",
@@ -83,8 +74,7 @@ public class SecurityConfig {
                 )
 
                 // Manejo de errores de autenticación
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
-
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPoint()))
                 // Filtro JWT antes de auth por usuario/clave
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -112,8 +102,6 @@ public class SecurityConfig {
         config.setAllowedHeaders(List.of("*"));
         // Permite cualquier encabezado
 
-        config.setAllowCredentials(true);
-        // Permite el envío de credenciales
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

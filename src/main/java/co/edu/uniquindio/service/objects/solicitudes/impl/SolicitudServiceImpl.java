@@ -108,6 +108,14 @@ public class SolicitudServiceImpl implements SolicitudService {
                 .toList();
     }
 
+    @Override
+    public List<SolicitudDto> obtenerSolicitudes() {
+        return solicitudRepo.findAll()
+                .stream()
+                .map(solicitudMapper::toDto)
+                .toList();
+    }
+
 
     public EspacioProducto obtenerEspacioProducto(Long id) throws ElementoNoEncontradoException {
         return espacioProductoRepo.findById(id)

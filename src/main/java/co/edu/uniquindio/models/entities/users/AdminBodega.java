@@ -32,4 +32,9 @@ public class AdminBodega extends Persona{
     private List<Resolucion> resoluciones;
 
 
+    public void agregarResolucion(Resolucion resolucion){
+        resoluciones.add(resolucion);
+        resolucion.setResolutor(this);
+    }
+
 }
