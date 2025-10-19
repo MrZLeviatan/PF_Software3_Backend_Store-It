@@ -14,6 +14,7 @@ import co.edu.uniquindio.models.enums.entities.TipoSolicitud;
 import co.edu.uniquindio.repository.objects.almacen.EspacioProductoRepo;
 import co.edu.uniquindio.repository.objects.solicitudes.SolicitudRepo;
 import co.edu.uniquindio.repository.users.GestorComercialRepo;
+import co.edu.uniquindio.service.objects.notificacion.NotificacionService;
 import co.edu.uniquindio.service.objects.solicitudes.SolicitudService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,8 @@ import java.util.List;
 public class SolicitudServiceImpl implements SolicitudService {
 
 
+    private final NotificacionService notificacionService;
+
     private final GestorComercialRepo gestorComercialRepo;
     private final EspacioProductoRepo espacioProductoRepo;
 
@@ -33,8 +36,7 @@ public class SolicitudServiceImpl implements SolicitudService {
     private final SolicitudMapper solicitudMapper;
 
 
-
-
+    // Crear un espacio de un producto
     @Override
     public void registrarSolicitudEspacio(EspacioProducto espacioProducto, RegistroEspacioProductoDto registroEspacioProductoDto)
             throws ElementoNoEncontradoException {
@@ -53,8 +55,12 @@ public class SolicitudServiceImpl implements SolicitudService {
         espacioProducto.agregarSolicitud(solicitud);
         solicitudRepo.save(solicitud);
 
+        // Se envía una notificación para la revisión del caso a los Admins
+        notificacionService.crearNotificacionSolicitudRegistroEspacio(solicitud);
     }
 
+
+    // Ampliar el espacio de un producto
     @Override
     public void registrarSolicitud(RegistroSolicitudDto registroSolicitudDto)
             throws ElementoNoEncontradoException {
@@ -74,6 +80,9 @@ public class SolicitudServiceImpl implements SolicitudService {
 
         // Se guarda en la BD
         solicitudRepo.save(solicitud);
+
+        // Se envía una notificación para la revisión del caso a los Admins
+        notificacionService.crearNotificacionSolicitudAmpliar(solicitud);
     }
 
     @Override

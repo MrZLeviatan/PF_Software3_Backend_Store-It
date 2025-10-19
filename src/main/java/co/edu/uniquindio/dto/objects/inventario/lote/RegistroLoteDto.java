@@ -9,7 +9,11 @@ public record RegistroLoteDto(
         int cantidadTotal,
         Double areaTotal,
         Long idEspacioProducto,
-        Long idGestorComercial
+
+
+        Long idGestorComercial,
+        LocalDate fechaEntra,
+        String observaciones
 
 ) {
 }

@@ -1,4 +1,4 @@
-package co.edu.uniquindio.controller.utils;
+package co.edu.uniquindio.controller.objects.solicitudes;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.objects.solicitudes.solicitud.SolicitudDto;

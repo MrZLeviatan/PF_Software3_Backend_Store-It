@@ -76,6 +76,12 @@ public abstract class Movimiento {
     private List<ParticipacionMovimiento> participaciones;
 
 
+    public void agregarParciticacion(ParticipacionMovimiento participacionMovimiento) {
+        participaciones.add(participacionMovimiento);
+        participacionMovimiento.setMovimiento(this);
+    }
+
+
 
 
 }

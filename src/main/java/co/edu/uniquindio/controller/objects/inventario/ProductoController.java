@@ -1,4 +1,4 @@
-package co.edu.uniquindio.controller.utils;
+package co.edu.uniquindio.controller.objects.inventario;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.objects.inventario.producto.ProductoDto;

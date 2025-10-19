@@ -1,4 +1,4 @@
-package co.edu.uniquindio.controller.gestorComercial;
+package co.edu.uniquindio.controller.users;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.objects.almacen.espacioProducto.RegistroEspacioProductoDto;

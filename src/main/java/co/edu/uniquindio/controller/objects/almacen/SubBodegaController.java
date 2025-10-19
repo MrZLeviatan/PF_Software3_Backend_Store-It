@@ -1,4 +1,4 @@
-package co.edu.uniquindio.controller.utils;
+package co.edu.uniquindio.controller.objects.almacen;
 
 
 import co.edu.uniquindio.dto.MensajeDto;

@@ -3,15 +3,15 @@ package co.edu.uniquindio.mapper.objects.inventario;
 import co.edu.uniquindio.dto.objects.inventario.lote.LoteDto;
 import co.edu.uniquindio.dto.objects.inventario.lote.RegistroLoteDto;
 import co.edu.uniquindio.mapper.objects.inventario.movimiento.MovimientoIngresoMapper;
+import co.edu.uniquindio.mapper.objects.inventario.movimiento.MovimientoRetiroMapper;
 import co.edu.uniquindio.mapper.objects.solicitudes.incidente.IncidenteLoteMapper;
 import co.edu.uniquindio.models.entities.objects.inventario.Lote;
-import co.edu.uniquindio.models.entities.objects.inventario.movimiento.MovimientoRetiro;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {
         MovimientoIngresoMapper.class,
-        MovimientoRetiro.class,
+        MovimientoRetiroMapper.class,
         IncidenteLoteMapper.class,
 
 })

@@ -11,6 +11,7 @@ import co.edu.uniquindio.models.enums.entities.TipoProducto;
 import co.edu.uniquindio.repository.objects.inventario.LoteRepo;
 import co.edu.uniquindio.service.objects.almacen.EspacioProductoService;
 import co.edu.uniquindio.service.objects.inventario.LoteService;
+import co.edu.uniquindio.service.objects.inventario.MovimientoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +24,9 @@ public class LoteServiceImpl implements LoteService {
 
     private final LoteRepo loteRepo;
     private final LoteMapper loteMapper;
+
     private final EspacioProductoService espacioProductoService;
+    private final MovimientoService movimientoService;
 
 
     @Override
@@ -47,6 +50,9 @@ public class LoteServiceImpl implements LoteService {
 
         // 4. Guardamos en la BD
         loteRepo.save(lote);
+
+        // 5. Creamos el movimiento de Ingreso
+        movimientoService.registroMovimientoIngreso(lote, registroLoteDto);
     }
 
 

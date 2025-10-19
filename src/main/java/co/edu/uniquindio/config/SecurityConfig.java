@@ -29,6 +29,9 @@ public class SecurityConfig {
     // Filtro personalizado para procesar los tokens JWT antes de la autenticación estándar
     private final JWTFilter jwtFilter;
 
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
+
 
     // Método de seguridad, configura el manejo de sesiones y donde estas pueden ingresar.
     @Bean
@@ -36,40 +39,52 @@ public class SecurityConfig {
         // Configura la seguridad de la aplicación
 
         http
-                //  Desactiva CSRF (se usa JWT
+                //  Desactiva CSRF (se usa JWT )
                 .csrf(AbstractHttpConfigurer::disable)
+                // Desactiva CSRF solo para WebSocket (evita bloqueos STOMP)
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**", "/topic/**", "/app/**"))
                 //  Habilita CORS con configuración previa
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 // Define sesiones sin estado (stateless)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // Reglas de acceso por endpoint y rol
-                .authorizeHttpRequests(req -> req
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Docs públicas
-                        .requestMatchers("/api/auth/**").permitAll() // Login/registro públicos
-                        .requestMatchers("/api/store-it/**").permitAll() // Público store-it
+                // Permitir el acceso a los endpoints WebSocket y rutas públicas
+                .authorizeHttpRequests(auth -> auth
+                        // Websockets Permitidos
 
-                        // Elemento usado por todos los empleados
-                        .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**","/api/espacio-producto/**"
-                            ,"/api/producto/**","/api/lote/**")
+                        // --- ENDPOINTS WEBSOCKET (permitidos) ---
+                        .requestMatchers("/ws/**", "/topic/**", "/app/**").permitAll()
 
-                            .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
-                                    "ROLE_AUXILIAR_BODEGA","ROLE_GESTOR_INVENTARIO","ROLE_GESTOR_BODEGA")
+                        // --- DOCUMENTACIÓN PÚBLICA ---
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
 
-                        // Elemento usado por Gestor Comercial y Admin
+                        // ---  ENDPOINTS PÚBLICOS ---
+                        .requestMatchers("/api/auth/**", "/api/store-it/**").permitAll()
+
+                        // --- ENDPOINTS USADOS POR TODOS LOS EMPLEADOS ---
+                        .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**",
+                                "/api/espacio-producto/**", "/api/producto/**",
+                                "/api/lote/**", "/api/notificaciones/**")
+                        .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
+                                "ROLE_AUXILIAR_BODEGA", "ROLE_GESTOR_INVENTARIO", "ROLE_GESTOR_BODEGA")
+
+                        // --- ENDPOINTS COMPARTIDOS ENTRE GESTOR COMERCIAL Y ADMIN ---
                         .requestMatchers("/api/solicitud/**")
-                            .hasAnyAuthority("ROLE_GESTOR_COMERCIAL","ROLE_ADMIN_BODEGA")
+                        .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA")
 
+                        // --- ENDPOINTS SOLO PARA GESTOR COMERCIAL ---
+                        .requestMatchers("/api/gestor-comercial/**")
+                        .hasAuthority("ROLE_GESTOR_COMERCIAL")
 
-                        // Elemento solo permitido para los Gestores Comerciales
-                        .requestMatchers("/api/gestor-comercial/**").hasAnyAuthority("ROLE_GESTOR_COMERCIAL")
-
-
-                        // Permitir acceso al endpoint de prometheus
+                        // --- MONITOREO PROMETHEUS ---
                         .requestMatchers("/actuator/prometheus").permitAll()
-                        .anyRequest().authenticated() // Resto requiere login
+
+                        // Cualquier otra solicitud requiere autenticación
+                        .anyRequest().authenticated()
                 )
+
                 // Manejo de errores de autenticación
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPoint()))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint))
+
                 // Filtro JWT antes de auth por usuario/clave
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
@@ -85,16 +100,20 @@ public class SecurityConfig {
         // Configura CORS (Cross-Origin Resource Sharing) para permitir solicitudes desde otros orígenes
 
         CorsConfiguration config = new CorsConfiguration();
+
+        // Permitir solicitudes desde cualquier origen (corrección en producción)
         config.setAllowedOrigins(List.of(
                 "*"
         ));
-        // Permite solicitudes desde cualquier origen (en producción es mejor restringir esto)
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Métodos HTTP permitidos
 
         config.setAllowedHeaders(List.of("*"));
         // Permite cualquier encabezado
+
+        config.setAllowCredentials(true);
+        // Permite el envío de credenciales
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

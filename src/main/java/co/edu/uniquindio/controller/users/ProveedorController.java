@@ -1,11 +1,9 @@
-package co.edu.uniquindio.controller.utils;
+package co.edu.uniquindio.controller.users;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.users.proveedor.ProveedorDto;
-import co.edu.uniquindio.dto.users.proveedor.RegistroProveedorDto;
 import co.edu.uniquindio.exceptions.*;
 import co.edu.uniquindio.service.users.ProveedorService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
