@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/store-it/clientes")
+@RequestMapping("/api/store-it")
 @RequiredArgsConstructor
 public class RegistroClienteController {
 
@@ -26,7 +26,7 @@ public class RegistroClienteController {
 
 
     // Endpoint para el registro de clientes con datos tradicionales (no Google).
-    @PostMapping("/registro")
+    @PostMapping("/clientes/registro")
     public ResponseEntity<MensajeDto<String>> registrarCliente(
             @Valid @RequestBody RegistroClienteDto registroClienteDto)
             throws ElementoRepetidoException, ElementoNulosException, ElementoEliminadoException, ElementoNoValidoException {
@@ -37,7 +37,7 @@ public class RegistroClienteController {
     }
 
     // Endpoint para validar un token de Google.
-    @PostMapping("/validate-google")
+    @PostMapping("/clientes/validate-google")
     public ResponseEntity<MensajeDto<GoogleUserResponse>> validarGoogle(@RequestBody GoogleTokenRequest googleTokenRequest)
             throws ElementoIncorrectoException {
 
@@ -48,7 +48,7 @@ public class RegistroClienteController {
 
 
     // Endpoint para el registro de clientes utilizando una cuenta de Google.
-    @PostMapping("/registro/google")
+    @PostMapping("/clientes/registro/google")
     public ResponseEntity<MensajeDto<String>> registrarClienteGoogle(
             @Valid @RequestBody RegistroClienteGoogleDto registroClienteGoogleDto)
             throws ElementoRepetidoException, ElementoNulosException, ElementoEliminadoException, ElementoNoValidoException {
@@ -60,7 +60,7 @@ public class RegistroClienteController {
 
 
     // Endpoint para verificar la cuenta de un cliente con un código.
-    @PostMapping("/verificar")
+    @PostMapping("/clientes/verificar")
     public ResponseEntity<MensajeDto<String>> verificarRegistroCliente(
             @Valid @RequestBody VerificacionCodigoDto verificacionCodigoDto)
             throws ElementoNoEncontradoException, ElementoNoCoincideException, ElementoIncorrectoException {

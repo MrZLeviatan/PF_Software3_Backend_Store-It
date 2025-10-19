@@ -4,7 +4,6 @@ import co.edu.uniquindio.dto.common.email.EmailDto;
 import co.edu.uniquindio.exceptions.*;
 import co.edu.uniquindio.models.embeddable.Codigo;
 import co.edu.uniquindio.models.entities.users.Persona;
-import co.edu.uniquindio.models.enums.embeddable.TipoCodigo;
 import co.edu.uniquindio.models.enums.users.EstadoCuenta;
 import co.edu.uniquindio.repository.users.PersonaRepo;
 import co.edu.uniquindio.service.utils.CodigoService;
@@ -13,7 +12,6 @@ import co.edu.uniquindio.service.utils.PersonaUtilService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -104,11 +102,13 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
 
     @Override
     public Persona buscarPersonaPorEmail(String email) throws ElementoNoEncontradoException {
-        return null;
+        return personaRepo.findByUser_Email(email)
+                .orElseThrow(() -> new ElementoNoEncontradoException("Persona con el email asociado no encontrado"));
     }
+
 
     @Override
     public void guardarPersonaBD(Persona persona) {
-
+        personaRepo.save(persona);
     }
 }

@@ -46,7 +46,25 @@ public class CodigoServiceImpl implements CodigoService {
     @Override
     public void autentificarCodigo(VerificacionCodigoDto verificacionCodigoDto)
             throws ElementoNoEncontradoException, ElementoNoCoincideException {
+
+        Persona personaOpt = personaUtilService.buscarPersonaPorEmail(verificacionCodigoDto.email());
+
+
+        // Verificar fecha de expiración
+        if (personaOpt.getUser().getCodigo().getFechaExpiracion().isBefore(LocalDateTime.now())) {
+            throw new ElementoNoCoincideException("El código proporcionado ha expirado.");
+        }
+
+        // Verificar coincidencia del código
+        if (!personaOpt.getUser().getCodigo().getClave().equals(verificacionCodigoDto.codigo())) {
+            throw new ElementoNoCoincideException("El código proporcionado no coincide");
+        }
+
+        // Limpiar el código usado y guardar cambios
+        personaOpt.getUser().setCodigo(null);
+        personaUtilService.guardarPersonaBD(personaOpt);
     }
+
 
     private String generacionClave() {
         return UUID.randomUUID().toString()
