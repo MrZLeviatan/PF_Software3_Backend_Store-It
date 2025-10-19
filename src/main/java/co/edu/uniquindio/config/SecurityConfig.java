@@ -47,6 +47,23 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Docs públicas
                         .requestMatchers("/api/auth/**").permitAll() // Login/registro públicos
                         .requestMatchers("/api/store-it/**").permitAll() // Público store-it
+
+                        // Elemento usado por todos los empleados
+                        .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**","/api/espacio-producto/**"
+                            ,"/api/producto/**","/api/lote/**")
+
+                            .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
+                                    "ROLE_AUXILIAR_BODEGA","ROLE_GESTOR_INVENTARIO","ROLE_GESTOR_BODEGA")
+
+                        // Elemento usado por Gestor Comercial y Admin
+                        .requestMatchers("/api/solicitud/**")
+                            .hasAnyAuthority("ROLE_GESTOR_COMERCIAL","ROLE_ADMIN_BODEGA")
+
+
+                        // Elemento solo permitido para los Gestores Comerciales
+                        .requestMatchers("/api/gestor-comercial/**").hasAnyAuthority("ROLE_GESTOR_COMERCIAL")
+
+
                         // Permitir acceso al endpoint de prometheus
                         .requestMatchers("/actuator/prometheus").permitAll()
                         .anyRequest().authenticated() // Resto requiere login

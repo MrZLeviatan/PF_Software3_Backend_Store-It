@@ -12,8 +12,9 @@ import co.edu.uniquindio.models.entities.objects.compra.CarritoCompra;
 import co.edu.uniquindio.models.entities.users.Cliente;
 import co.edu.uniquindio.models.enums.users.EstadoCuenta;
 import co.edu.uniquindio.models.enums.users.TipoCliente;
+import co.edu.uniquindio.repository.objects.compra.CarritoCompraRepo;
 import co.edu.uniquindio.repository.users.ClienteRepo;
-import co.edu.uniquindio.service.objects.CarritoCompraService;
+import co.edu.uniquindio.service.objects.compra.CarritoCompraService;
 import co.edu.uniquindio.service.users.ClienteService;
 import co.edu.uniquindio.service.utils.*;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -37,6 +38,7 @@ public class ClienteServiceImpl implements ClienteService {
     private final CodigoService codigoService;
     private final EmailService emailService;
     private final CarritoCompraService carritoCompraService;
+    private final CarritoCompraRepo carritoCompraRepo;
 
     private final ClienteMapper clienteMapper;
     private final ClienteRepo clienteRepo;
@@ -198,6 +200,9 @@ public class ClienteServiceImpl implements ClienteService {
         // Se cambia el estado de la cuenta del Cliente
         cliente.getUser().setEstadoCuenta(EstadoCuenta.ACTIVO);
         cliente.getUser().setCodigo(null);
+
+        // Se guarda primero el carrito, luego el cliente (para evitar detached entities)
+        carritoCompraRepo.save(carritoCompra);
         clienteRepo.save(cliente);
     }
 

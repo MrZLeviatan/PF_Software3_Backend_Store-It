@@ -7,6 +7,7 @@ public enum TipoProducto {
     ALIMENTO,
     LIMPIEZA,
     ELECTRODOMESTICOS,
+    PERECEDEROS,
     OTROS
 
 }

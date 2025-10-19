@@ -18,5 +18,6 @@ import org.mapstruct.Mapping;
 public interface GestorComercialMapper {
 
     @Mapping(source = ".", target = "persona")
+    @Mapping(target = "datosLaborales.idBodega", source = "datosLaborales.bodega.id")
     GestorComercialDto toDto(GestorComercial gestorComercial);
 }

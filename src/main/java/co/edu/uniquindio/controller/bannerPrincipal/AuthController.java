@@ -1,4 +1,4 @@
-package co.edu.uniquindio.controller.banner;
+package co.edu.uniquindio.controller.bannerPrincipal;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.TokenDto;

@@ -6,6 +6,7 @@ import co.edu.uniquindio.exceptions.ElementoNoEncontradoException;
 import co.edu.uniquindio.models.embeddable.Codigo;
 import co.edu.uniquindio.models.entities.users.Persona;
 import co.edu.uniquindio.models.enums.embeddable.TipoCodigo;
+import co.edu.uniquindio.repository.users.PersonaRepo;
 import co.edu.uniquindio.service.utils.CodigoService;
 import co.edu.uniquindio.service.utils.PersonaUtilService;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,8 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CodigoServiceImpl implements CodigoService {
 
-    private final PersonaUtilService personaUtilService;
 
+    private final PersonaRepo personaRepo;
 
     @Override
     public Codigo generarCodigoVerificacion2AF() {
@@ -47,7 +48,7 @@ public class CodigoServiceImpl implements CodigoService {
     public void autentificarCodigo(VerificacionCodigoDto verificacionCodigoDto)
             throws ElementoNoEncontradoException, ElementoNoCoincideException {
 
-        Persona personaOpt = personaUtilService.buscarPersonaPorEmail(verificacionCodigoDto.email());
+        Persona personaOpt = buscarPersonaPorEmail(verificacionCodigoDto.email());
 
 
         // Verificar fecha de expiración
@@ -62,7 +63,13 @@ public class CodigoServiceImpl implements CodigoService {
 
         // Limpiar el código usado y guardar cambios
         personaOpt.getUser().setCodigo(null);
-        personaUtilService.guardarPersonaBD(personaOpt);
+        personaRepo.save(personaOpt);
+    }
+
+
+    public Persona buscarPersonaPorEmail(String email) throws ElementoNoEncontradoException {
+        return personaRepo.findByUser_Email(email)
+                .orElseThrow(() -> new ElementoNoEncontradoException("Persona con el email asociado no encontrado"));
     }
 
 
