@@ -1,4 +1,4 @@
-package co.edu.uniquindio.controller.banner;
+package co.edu.uniquindio.controller.bannerPrincipal;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.common.auth.VerificacionCodigoDto;
@@ -11,10 +11,7 @@ import co.edu.uniquindio.service.users.ClienteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/store-it")
@@ -68,4 +65,19 @@ public class RegistroClienteController {
         clienteService.verificacionCliente(verificacionCodigoDto);
         return ResponseEntity.ok(new MensajeDto<>(false ,"Cliente verificado con éxito."));
     }
+
+
+    @GetMapping("/clientes/verificar/email/{email}/codigo/{codigo}")
+    public ResponseEntity<MensajeDto<String>> verificarClienteEmail(
+            @PathVariable String email,
+            @PathVariable String codigo)
+            throws ElementoIncorrectoException, ElementoNoCoincideException, ElementoNoEncontradoException {
+
+        clienteService.verificacionClienteLink(email,codigo);
+        return ResponseEntity.ok(new MensajeDto<>(false ,"Cliente verificado con éxito."));
+
+    }
+
+
+
 }

@@ -83,7 +83,7 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
         existe = personaRepo.existsByTelefono(telefono);
 
         // Validamos la existencia del teléfono principal y secundario (Si existe)
-        if (telefonoSecundario != null || !telefonoSecundario.isBlank()) {
+        if (telefonoSecundario != null && !telefonoSecundario.isBlank()) {
             existe = personaRepo.existsByTelefonoOrTelefonoSecundario(telefono, telefonoSecundario);
         }
 
@@ -103,6 +103,13 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
     @Override
     public Persona buscarPersonaPorEmail(String email) throws ElementoNoEncontradoException {
         return personaRepo.findByUser_Email(email)
+                .orElseThrow(() -> new ElementoNoEncontradoException("Persona con el email asociado no encontrado"));
+    }
+
+
+    @Override
+    public Persona buscarPersonaPorId(Long id) throws ElementoNoEncontradoException {
+        return personaRepo.findById(id)
                 .orElseThrow(() -> new ElementoNoEncontradoException("Persona con el email asociado no encontrado"));
     }
 

@@ -29,6 +29,9 @@ public class SecurityConfig {
     // Filtro personalizado para procesar los tokens JWT antes de la autenticación estándar
     private final JWTFilter jwtFilter;
 
+    private final AuthenticationEntryPoint authenticationEntryPoint;
+
+
 
     // Método de seguridad, configura el manejo de sesiones y donde estas pueden ingresar.
     @Bean
@@ -47,10 +50,29 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Docs públicas
                         .requestMatchers("/api/auth/**").permitAll() // Login/registro públicos
                         .requestMatchers("/api/store-it/**").permitAll() // Público store-it
-                        // Permitir acceso al endpoint de prometheus
+
+                        // --- ENDPOINTS USADOS POR TODOS LOS EMPLEADOS ---
+                        .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**",
+                                "/api/espacio-producto/**", "/api/producto/**",
+                                "/api/lote/**", "/api/notificaciones/**")
+                        .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
+                                "ROLE_AUXILIAR_BODEGA", "ROLE_GESTOR_INVENTARIO", "ROLE_GESTOR_BODEGA")
+
+                        // --- ENDPOINTS COMPARTIDOS ENTRE GESTOR COMERCIAL Y ADMIN ---
+                        .requestMatchers("/api/solicitud/**")
+                        .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA")
+
+                        // --- ENDPOINTS SOLO PARA GESTOR COMERCIAL ---
+                        .requestMatchers("/api/gestor-comercial/**")
+                        .hasAuthority("ROLE_GESTOR_COMERCIAL")
+
+                        // --- MONITOREO PROMETHEUS ---
                         .requestMatchers("/actuator/prometheus").permitAll()
-                        .anyRequest().authenticated() // Resto requiere login
+
+                        // Cualquier otra solicitud requiere autenticación
+                        .anyRequest().authenticated()
                 )
+
                 // Manejo de errores de autenticación
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPoint()))
                 // Filtro JWT antes de auth por usuario/clave
@@ -68,16 +90,18 @@ public class SecurityConfig {
         // Configura CORS (Cross-Origin Resource Sharing) para permitir solicitudes desde otros orígenes
 
         CorsConfiguration config = new CorsConfiguration();
+
+        // Permitir solicitudes desde cualquier origen (corrección en producción)
         config.setAllowedOrigins(List.of(
                 "*"
         ));
-        // Permite solicitudes desde cualquier origen (en producción es mejor restringir esto)
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         // Métodos HTTP permitidos
 
         config.setAllowedHeaders(List.of("*"));
         // Permite cualquier encabezado
+
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

@@ -46,4 +46,15 @@ public class GestorComercial extends Persona{
     private List<Movimiento> movimientos;
 
 
+    public void agregarSolicitud(Solicitud solicitud){
+        solicitudes.add(solicitud);
+        solicitud.setGestorComercial(this);
+    }
+
+    public void agregarMovimiento(Movimiento movimiento){
+        movimientos.add(movimiento);
+        movimiento.setGestorComercial(this);
+    }
+
+
 }

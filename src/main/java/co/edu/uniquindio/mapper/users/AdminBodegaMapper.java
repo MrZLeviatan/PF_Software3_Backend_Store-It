@@ -15,6 +15,7 @@ public interface AdminBodegaMapper {
 
 
     @Mapping(source = ".", target = "persona")
+    @Mapping(target = "datosLaborales.idBodega", source = "datosLaborales.bodega.id")
     AdminBodegaDto toDto(AdminBodega adminBodega);
 
 }

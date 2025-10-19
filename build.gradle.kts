@@ -44,6 +44,12 @@ dependencies {
     // Starter de seguridad: Autenticación y autorización básica.
     implementation("org.springframework.boot:spring-boot-starter-security")
 
+    // Dependencia para WebSockets
+    implementation("org.springframework.boot:spring-boot-starter-websocket")
+
+    // Dependencia para mensajería con STOMP sobre WebSocket
+    implementation("org.springframework.boot:spring-boot-starter-web")
+
     // ==== Autenticación con Google y seguridad avanzada ====
     // Cliente OAuth2: Permite iniciar sesión con Google (OAuth2/OIDC).
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")

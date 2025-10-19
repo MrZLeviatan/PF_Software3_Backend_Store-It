@@ -116,4 +116,9 @@ public class Lote {
         }
     }
 
+    public void agregarMovimiento(Movimiento movimiento) {
+        movimientos.add(movimiento);
+        movimiento.setLote(this);
+    }
+
 }

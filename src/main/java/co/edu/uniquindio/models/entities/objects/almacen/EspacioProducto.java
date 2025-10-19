@@ -6,6 +6,7 @@ import co.edu.uniquindio.models.embeddable.UnidadAlmacenamiento;
 import co.edu.uniquindio.models.entities.objects.inventario.Lote;
 import co.edu.uniquindio.models.entities.objects.inventario.Producto;
 import co.edu.uniquindio.models.entities.objects.solicitudes.Solicitud;
+import co.edu.uniquindio.models.enums.entities.EstadoEspacioProducto;
 import co.edu.uniquindio.models.enums.entities.EstadoLote;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,10 @@ public class EspacioProducto {
     @Comment("Cantidad total de productos en base a los lotes")
     private int cantidadTotal;
 
+    @Column(name = "estado_espacio")
+    @Comment("Estado del espacio producto (ACTIVO, INACTIVO)")
+    private EstadoEspacioProducto estadoEspacio;
+
     // Solicitudes asociadas al espacio producto
     @OneToMany(mappedBy = "espacioProducto")
     private List<Solicitud> solicitudes;
@@ -84,6 +89,8 @@ public class EspacioProducto {
     }
 
 
+
+
     // Método para liberar espacio ( Lotes en estado AGOTADO, CADUCADO )
     public void liberarEspacio(Lote lote) throws ElementoNoValidoException {
         if (lote == null || !lotes.contains(lote)) return;
@@ -101,6 +108,12 @@ public class EspacioProducto {
 
         // Actualiza la cantidad total
         cantidadTotal = Math.max(0, cantidadTotal - lote.getCantidadDisponible());
+    }
+
+
+    public void agregarSolicitud(Solicitud solicitud){
+        solicitudes.add(solicitud);
+        solicitud.setEspacioProducto(this);
     }
 
 }

@@ -43,9 +43,10 @@ public class EmailServiceImpl implements EmailService {
             String htmlTemplate = loadHtmlTemplate("templates/verificacion.html");
 
             // 2. Construir la URL de verificación con parámetros dinámicos
+            String codigoLimpio = emailDto.cuerpo().replaceAll("[^a-zA-Z0-9]", "");
             String verificationUrl = verificationBaseUrl
-                    + "?email=" + URLEncoder.encode(emailDto.destinatario(), StandardCharsets.UTF_8)
-                    + "&codigo=" + URLEncoder.encode(emailDto.cuerpo(), StandardCharsets.UTF_8);
+                    + "/registroClientes?email=" + URLEncoder.encode(emailDto.destinatario(), StandardCharsets.UTF_8)
+                    + "&codigo=" + URLEncoder.encode(codigoLimpio, StandardCharsets.UTF_8);
 
             // 3. Reemplazar los placeholders del HTML con datos reales
             String cuerpoPersonalizado = htmlTemplate

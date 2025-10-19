@@ -30,7 +30,6 @@ public class Notificacion {
     @Comment("Título breve de la notificación")
     private String titulo;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
     @Comment("Mensaje o cuerpo de la notificación")
     private String descripcion;
 

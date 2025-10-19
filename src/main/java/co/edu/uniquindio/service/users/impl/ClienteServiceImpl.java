@@ -12,8 +12,9 @@ import co.edu.uniquindio.models.entities.objects.compra.CarritoCompra;
 import co.edu.uniquindio.models.entities.users.Cliente;
 import co.edu.uniquindio.models.enums.users.EstadoCuenta;
 import co.edu.uniquindio.models.enums.users.TipoCliente;
+import co.edu.uniquindio.repository.objects.compra.CarritoCompraRepo;
 import co.edu.uniquindio.repository.users.ClienteRepo;
-import co.edu.uniquindio.service.objects.CarritoCompraService;
+import co.edu.uniquindio.service.objects.compra.CarritoCompraService;
 import co.edu.uniquindio.service.users.ClienteService;
 import co.edu.uniquindio.service.utils.*;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
@@ -37,6 +38,7 @@ public class ClienteServiceImpl implements ClienteService {
     private final CodigoService codigoService;
     private final EmailService emailService;
     private final CarritoCompraService carritoCompraService;
+    private final CarritoCompraRepo carritoCompraRepo;
 
     private final ClienteMapper clienteMapper;
     private final ClienteRepo clienteRepo;
@@ -198,8 +200,58 @@ public class ClienteServiceImpl implements ClienteService {
         // Se cambia el estado de la cuenta del Cliente
         cliente.getUser().setEstadoCuenta(EstadoCuenta.ACTIVO);
         cliente.getUser().setCodigo(null);
+
+        // Se guarda primero el carrito, luego el cliente (para evitar detached entities)
+        carritoCompraRepo.save(carritoCompra);
         clienteRepo.save(cliente);
     }
+
+
+    @Override
+    public void verificacionClienteLink(String email, String codigo)
+            throws ElementoNoEncontradoException, ElementoIncorrectoException, ElementoNoCoincideException {
+
+        // Se obtiene el cliente mediante el email
+        Cliente cliente = obtenerClientePorEmail(email);
+
+        // Verifica el estado del user del cliente
+        if (cliente.getUser().getEstadoCuenta().equals(EstadoCuenta.ACTIVO)) {
+            throw new ElementoIncorrectoException("La cuenta ya fue activada previamente.");
+        }
+
+        // Si el Código expiro se envia uno nuevamente al Cliente
+        if (cliente.getUser().getCodigo().getFechaExpiracion().isBefore(LocalDateTime.now())) {
+            Codigo codigoVerificacion = codigoService.generarCodigoVerificacion2AF();
+            cliente.getUser().setCodigo(codigoVerificacion);
+            clienteRepo.save(cliente);
+
+            EmailDto emailDto = new EmailDto(
+                    cliente.getUser().getEmail(),
+                    codigoVerificacion.getClave(),
+                    "Reverificación de Cuenta - Store-It");
+            emailService.enviarEmailVerificacionRegistro(emailDto);
+
+            throw new ElementoNoCoincideException("El código proporcionado ha expirado.");
+        }
+
+        // Verifica el codigo si coincide
+        if (!cliente.getUser().getCodigo().getClave().equals(codigo)) {
+            throw new ElementoNoCoincideException("El código proporcionado no es válido.");
+        }
+
+        // Se genera un carrito de compra y se alistan
+        CarritoCompra carritoCompra = carritoCompraService.generarCarritoCliente(cliente);
+        cliente.setCarritoCompra(carritoCompra);
+
+        // Se cambia el estado de la cuenta del Cliente
+        cliente.getUser().setEstadoCuenta(EstadoCuenta.ACTIVO);
+        cliente.getUser().setCodigo(null);
+
+        // Se guarda primero el carrito, luego el cliente (para evitar detached entities)
+        carritoCompraRepo.save(carritoCompra);
+        clienteRepo.save(cliente);
+    }
+
 
 
     // Obtener un cliente desde el email.

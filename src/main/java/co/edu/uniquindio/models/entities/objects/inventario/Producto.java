@@ -41,6 +41,10 @@ public class Producto {
     @Comment("Valor venta establecido por el sistema")
     private Double valorVenta;
 
+    @Column(name = "imagen_producto_url")
+    @Comment("URL de la imagen del producto (Almacenada en Cloudinary).")
+    private String imagen;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_producto", nullable = false)
     @Comment("Clae o Tipo de producto")
