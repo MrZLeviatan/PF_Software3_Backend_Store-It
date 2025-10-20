@@ -10,6 +10,7 @@ public record ProductoDto(
         String nombre,
         Double valorCompra,
         Double valorVenta,
+        String imagen,
         TipoProducto tipoProducto,
         EspacioProductoDto espacioProducto,
         Long idProveedor

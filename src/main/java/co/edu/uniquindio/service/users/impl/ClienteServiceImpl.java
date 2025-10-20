@@ -253,6 +253,13 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
 
+    @Override
+    public Cliente obtenerClienteId(Long id) throws ElementoNoEncontradoException {
+        return clienteRepo.findById(id)
+                .orElseThrow(() ->
+                        new ElementoNoEncontradoException("Cliente no encontrado"));
+    }
+
 
     // Obtener un cliente desde el email.
     private Cliente obtenerClientePorEmail(String email)

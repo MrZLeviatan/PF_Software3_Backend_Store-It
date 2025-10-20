@@ -7,6 +7,7 @@ import co.edu.uniquindio.exceptions.ElementoNoValidoException;
 import co.edu.uniquindio.exceptions.ElementoNulosException;
 import co.edu.uniquindio.exceptions.ElementoRepetidoException;
 import co.edu.uniquindio.models.entities.objects.inventario.Producto;
+import co.edu.uniquindio.models.enums.entities.TipoProducto;
 
 import java.util.List;
 
@@ -21,5 +22,7 @@ public interface ProductoService {
     ProductoDto obtenerProductoDto(Long idProducto) throws ElementoNoEncontradoException;
 
     List<ProductoDto> listarProductoDto();
+
+    List<ProductoDto> listarProductosFiltro(TipoProducto tipoProducto);
 
 }

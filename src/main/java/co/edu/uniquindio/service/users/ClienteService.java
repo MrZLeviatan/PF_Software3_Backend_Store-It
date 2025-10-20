@@ -5,6 +5,7 @@ import co.edu.uniquindio.dto.common.google.GoogleUserResponse;
 import co.edu.uniquindio.dto.users.cliente.RegistroClienteDto;
 import co.edu.uniquindio.dto.users.cliente.RegistroClienteGoogleDto;
 import co.edu.uniquindio.exceptions.*;
+import co.edu.uniquindio.models.entities.users.Cliente;
 
 public interface ClienteService {
 
@@ -30,6 +31,8 @@ public interface ClienteService {
     void verificacionClienteLink(String email, String codigo)
             throws ElementoNoEncontradoException, ElementoIncorrectoException, ElementoNoCoincideException;
 
+
+    Cliente obtenerClienteId(Long id) throws ElementoNoEncontradoException;
 
 
 }

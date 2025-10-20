@@ -43,6 +43,8 @@ public class ItemsCarrito {
     private CarritoCompra carritoCompra;
 
 
+
+
     @PrePersist // Se ejecuta antes de insertar entidades en la base de datos
     @PreUpdate  // Se ejecuta antes de actualizar entidades en la base de datos.
     private void calcularValorItem(){

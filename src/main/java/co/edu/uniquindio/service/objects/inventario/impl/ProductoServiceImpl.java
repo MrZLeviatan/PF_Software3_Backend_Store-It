@@ -9,6 +9,7 @@ import co.edu.uniquindio.exceptions.ElementoRepetidoException;
 import co.edu.uniquindio.mapper.objects.inventario.ProductoMapper;
 import co.edu.uniquindio.models.entities.objects.inventario.Producto;
 import co.edu.uniquindio.models.entities.users.Proveedor;
+import co.edu.uniquindio.models.enums.entities.TipoProducto;
 import co.edu.uniquindio.repository.objects.inventario.ProductoRepo;
 import co.edu.uniquindio.service.objects.inventario.ProductoService;
 import co.edu.uniquindio.service.users.ProveedorService;
@@ -80,6 +81,15 @@ public class ProductoServiceImpl implements ProductoService {
     @Override
     public List<ProductoDto> listarProductoDto() {
         return productoRepo.findAll()
+                .stream()
+                .map(productoMapper::toDto)
+                .toList();
+    }
+
+
+    @Override
+    public List<ProductoDto> listarProductosFiltro(TipoProducto tipoProducto) {
+        return productoRepo.findAllByTipoProducto(tipoProducto)
                 .stream()
                 .map(productoMapper::toDto)
                 .toList();
