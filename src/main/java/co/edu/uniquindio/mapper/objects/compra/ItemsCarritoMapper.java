@@ -1,6 +1,7 @@
 package co.edu.uniquindio.mapper.objects.compra;
 
 import co.edu.uniquindio.dto.objects.compras.itemCarrito.ItemCarritoDto;
+import co.edu.uniquindio.dto.objects.compras.itemCarrito.RegistroItemCompraDto;
 import co.edu.uniquindio.models.entities.objects.compra.ItemsCarrito;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -12,5 +13,12 @@ public interface ItemsCarritoMapper {
     @Mapping(target = "idProducto", source = "producto.id")
     @Mapping(target = "idCarritoCompra", source = "carritoCompra.id")
     ItemCarritoDto toDto(ItemsCarrito itemCarrito);
+
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "producto", ignore = true)
+    @Mapping(target = "carritoCompra", ignore = true)
+    @Mapping(target = "valorTotal", ignore = true)
+    ItemsCarrito toEntity(RegistroItemCompraDto registroItemCompraDto);
 
 }

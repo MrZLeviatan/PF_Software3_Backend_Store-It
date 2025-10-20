@@ -5,6 +5,7 @@ import co.edu.uniquindio.dto.objects.inventario.producto.ProductoDto;
 
 import co.edu.uniquindio.exceptions.ElementoNoEncontradoException;
 
+import co.edu.uniquindio.models.enums.entities.TipoProducto;
 import co.edu.uniquindio.service.objects.inventario.ProductoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,14 @@ public class ProductoController {
         List<ProductoDto> listarProductos = productoService.listarProductoDto();
         return ResponseEntity.ok().body(new MensajeDto<>(false,listarProductos));
     }
+
+
+    @GetMapping("/listar/{tipoProducto}")
+    public ResponseEntity<MensajeDto<List<ProductoDto>>> obtenerProductosTipoProducto(@PathVariable TipoProducto tipoProducto){
+        List<ProductoDto> listarProductos = productoService.listarProductosFiltro(tipoProducto);
+        return ResponseEntity.ok().body(new MensajeDto<>(false,listarProductos));
+    }
+
 
 
     @GetMapping("/{idProducto}")
