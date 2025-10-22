@@ -10,7 +10,8 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {
         LoteMapper.class,
-        SolicitudMapper.class
+        SolicitudMapper.class,
+        UnidadAlmacenamientoMapper.class
 
 })
 public interface EspacioProductoMapper {

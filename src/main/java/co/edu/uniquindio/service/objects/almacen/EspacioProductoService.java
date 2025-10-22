@@ -18,6 +18,7 @@ public interface EspacioProductoService {
     EspacioProductoDto obtenerEspacioProductoDto(Long idEspacioProducto)
             throws ElementoNoEncontradoException;
 
+    // Se busca el espacio de un producto mediante Id dell producto, posteriormente se mapea el espacio
     EspacioProductoDto obtenerEspacioDelProducto(Long idProducto)
             throws ElementoNoEncontradoException;
 

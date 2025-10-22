@@ -16,11 +16,12 @@ public interface ProveedorService {
     Proveedor encontrarProveedor(Long idProveedor)
             throws ElementoNoEncontradoException;
 
+    //Se busca el proveedor mediante su ID y se mapea a proveedorDto
     ProveedorDto encontrarProveedorDto(Long idProveedor)
             throws ElementoNoEncontradoException;
 
+    // Se listan los proveedores con mapeo al proveedorDto
     List<ProveedorDto> listarProveedores();
-
 
 
 }

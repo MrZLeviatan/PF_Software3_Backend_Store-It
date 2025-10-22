@@ -11,9 +11,10 @@ import java.util.List;
 @Repository
 public interface ProductoRepo extends JpaRepository<Producto, Long>, JpaSpecificationExecutor<Producto> {
 
-
+    // Verifica la existencia de un mismo código de barras para un producto.
     boolean existsByCodigoBarras(String codigoBarras);
 
+    // Se obtienen los productos con el mismo tipo de producto.
     List<Producto> findAllByTipoProducto(TipoProducto tipoProducto);
 
 

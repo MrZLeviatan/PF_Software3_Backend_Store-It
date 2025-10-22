@@ -35,12 +35,4 @@ public class ProveedorController {
         List<ProveedorDto> proveedores = proveedorService.listarProveedores();
         return ResponseEntity.ok().body(new MensajeDto<>(false,proveedores));
     }
-
-
-
-
-
-
-
-
 }

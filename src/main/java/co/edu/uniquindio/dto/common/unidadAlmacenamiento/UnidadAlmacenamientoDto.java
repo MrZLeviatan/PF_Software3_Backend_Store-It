@@ -9,6 +9,8 @@ public record UnidadAlmacenamientoDto(
         Double alto,
         Double volumenOcupado,
         EstadoUnidad estadoUnidad,
-        Double volumenTotal
+        Double volumenTotal,
+        Double volumenDisponible,
+        double porcentajeOcupacion
 ) {
 }

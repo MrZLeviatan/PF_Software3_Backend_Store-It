@@ -72,21 +72,15 @@ public class EspacioProductoServiceImpl implements EspacioProductoService {
     }
 
 
-    public EspacioProducto obtenerEspacioDelProductoId(Long idProducto) throws ElementoNoEncontradoException {
-        return espacioProductoRepo.findByProducto_Id(idProducto)
-                .orElseThrow(() ->
-                        new ElementoNoEncontradoException("EspacioProducto no encontrado"));
-    }
-
-
     @Override
     public EspacioProductoDto obtenerEspacioDelProducto(Long idProducto)
             throws ElementoNoEncontradoException {
-        return espacioProductoMapper.toDto(obtenerEspacioProductoId(idProducto));
+        return espacioProductoMapper.toDto(
+                espacioProductoRepo.findByProducto_Id(idProducto)
+                        .orElseThrow(() ->
+                                new ElementoNoEncontradoException("Espacio del producto no encontrado")
+        ));
     }
-
-
-
 
 
 }

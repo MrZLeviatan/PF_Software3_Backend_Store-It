@@ -51,6 +51,11 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll() // Login/registro públicos
                         .requestMatchers("/api/store-it/**").permitAll() // Público store-it
 
+                        // ENDPOINTS para todos,
+                        .requestMatchers("/api/producto/**")
+                        .hasAnyAuthority("ROLE_CLIENTE", "ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
+                                "ROLE_AUXILIAR_BODEGA", "ROLE_GESTOR_INVENTARIO", "ROLE_GESTOR_BODEGA")
+
                         // --- ENDPOINTS USADOS POR TODOS LOS EMPLEADOS ---
                         .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**",
                                 "/api/espacio-producto/**",
@@ -58,9 +63,6 @@ public class SecurityConfig {
                         .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
                                 "ROLE_AUXILIAR_BODEGA", "ROLE_GESTOR_INVENTARIO", "ROLE_GESTOR_BODEGA")
 
-                        // ENDPOINTS para el Cliente
-                        .requestMatchers("/api/producto/**")
-                            .hasAnyAuthority("ROLE_CLIENTE")
 
                         // --- ENDPOINTS COMPARTIDOS ENTRE GESTOR COMERCIAL Y ADMIN ---
                         .requestMatchers("/api/solicitud/**")

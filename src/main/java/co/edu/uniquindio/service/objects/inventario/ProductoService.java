@@ -14,15 +14,26 @@ import java.util.List;
 public interface ProductoService {
 
 
+    // Proceso del Gestor comercial para registrar un producto.
     void registroProducto(RegistroProductoDto registroProducto)
-            throws ElementoRepetidoException, ElementoNoEncontradoException, ElementoNoValidoException, ElementoNulosException;
+            throws ElementoRepetidoException, ElementoNoEncontradoException,
+            ElementoNoValidoException, ElementoNulosException;
 
-    Producto obtenerProducto(Long id) throws ElementoNoEncontradoException;
+    // Método para obtener productos mediante su Id
+    Producto obtenerProducto(Long id)
+            throws ElementoNoEncontradoException;
 
-    ProductoDto obtenerProductoDto(Long idProducto) throws ElementoNoEncontradoException;
+    // Método para obtener y mapear el producto a productoDto mediante su ID
+    ProductoDto obtenerProductoDto(Long idProducto)
+            throws ElementoNoEncontradoException;
 
+    // Se lista todos los productos, se mapean a productoDto,
     List<ProductoDto> listarProductoDto();
 
-    List<ProductoDto> listarProductosFiltro(TipoProducto tipoProducto);
+    // Filtrar los productos mediante su TipoProducto o Id Proveedor
+    List<ProductoDto> listarProductosFiltro(
+            TipoProducto tipoProducto, String idProveedor,
+            int pagina, int size);
+
 
 }

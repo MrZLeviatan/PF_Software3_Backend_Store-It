@@ -17,7 +17,6 @@ public class EspacioProductoController {
     private final EspacioProductoService espacioProductoService;
 
 
-
     @GetMapping("/{idEspacio}")
     public ResponseEntity<MensajeDto<EspacioProductoDto>> obtenerEspacioProducto(@PathVariable Long idEspacio)
             throws ElementoNoEncontradoException {
@@ -27,6 +26,7 @@ public class EspacioProductoController {
     }
 
 
+    // Endpoint para la busquea de los espacios del producto mediante el Id del producto
     @GetMapping("/producto/{idProducto}")
     public ResponseEntity<MensajeDto<EspacioProductoDto>> obtenerEspacioDeProducto(@PathVariable Long idProducto)
             throws ElementoNoEncontradoException {

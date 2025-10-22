@@ -15,9 +15,14 @@ import co.edu.uniquindio.service.objects.inventario.ProductoService;
 import co.edu.uniquindio.service.users.ProveedorService;
 import co.edu.uniquindio.service.utils.CloudinaryService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -88,12 +93,40 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     @Override
-    public List<ProductoDto> listarProductosFiltro(TipoProducto tipoProducto) {
-        return productoRepo.findAllByTipoProducto(tipoProducto)
-                .stream()
+    public List<ProductoDto> listarProductosFiltro(TipoProducto tipoProducto, String idProveedor, int pagina, int size) {
+
+        //1. Configurar paginación
+        Pageable pageable = PageRequest.of(pagina, size);
+
+        // 2. Crear especificación inicial vacía
+        Specification<Producto> spec = Specification.where(null);
+
+        // 3, Filtra por el tipo de producto
+        if (tipoProducto != null) {
+            spec = spec.and((root,query,builder) ->
+                    builder.equal(root.get("tipoProducto"), tipoProducto));
+        }
+
+        // 4. Filtramos por Proveedor
+        if (idProveedor != null) {
+            spec = spec.and((root,query, builder) ->
+                    builder.equal(root.get("proveedor").get("id"), Long.parseLong(idProveedor)));
+        }
+
+        // 5. Ejecutar consulta paginada con los filtros
+        Page<Producto> productosPage = productoRepo.findAll(spec, pageable);
+
+        // 8. Mapear entidades a DTOs y devolver lista
+        return productosPage.getContent().stream()
                 .map(productoMapper::toDto)
-                .toList();
+                .collect(Collectors.toList());
     }
+
+
+
+
+
+
 
 
 }
