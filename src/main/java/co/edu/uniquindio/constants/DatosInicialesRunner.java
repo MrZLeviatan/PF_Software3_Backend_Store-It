@@ -121,6 +121,8 @@ public class DatosInicialesRunner implements CommandLineRunner {
 
 **/
 
+/**
+
         EspacioProducto  espacioProducto = espacioProductoRepo.findById(1L).orElseThrow();
 
         Lote lote = new Lote();
@@ -141,8 +143,9 @@ public class DatosInicialesRunner implements CommandLineRunner {
             System.out.println("✅ Lote agregado correctamente al espacio producto.");
         } catch (ElementoNoValidoException e) {
             System.err.println("❌ Error al agregar lote: " + e.getMessage());
-        }
 
+ }
+
+ **/
     }
-
 }

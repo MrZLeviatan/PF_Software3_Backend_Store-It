@@ -38,7 +38,7 @@ public class ProductoServiceImpl implements ProductoService {
 
 
     @Override
-    public void registroProducto(RegistroProductoDto registroProducto)
+    public ProductoDto registroProducto(RegistroProductoDto registroProducto)
             throws ElementoRepetidoException, ElementoNoEncontradoException, ElementoNoValidoException, ElementoNulosException {
 
         // 1. Validamos si el código de barras no está repetido
@@ -65,6 +65,8 @@ public class ProductoServiceImpl implements ProductoService {
 
         // Guardamos el producto
         productoRepo.save(producto);
+
+        return productoMapper.toDto(producto);
     }
 
 

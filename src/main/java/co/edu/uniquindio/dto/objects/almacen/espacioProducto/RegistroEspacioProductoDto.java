@@ -8,7 +8,7 @@ public record RegistroEspacioProductoDto(
 
 
         @NotNull @Valid RegistroUnidadAlmacenamientoDto unidadAlmacenamiento,
-        @NotNull Long idSubBodega,
+        Long idSubBodega,
         @NotNull Long idProducto,
         String descripcion,
         @NotNull Long idGestor

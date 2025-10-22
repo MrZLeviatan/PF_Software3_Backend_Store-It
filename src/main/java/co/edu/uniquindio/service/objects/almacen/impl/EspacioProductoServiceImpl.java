@@ -32,29 +32,30 @@ public class EspacioProductoServiceImpl implements EspacioProductoService {
 
 
     @Override
-    public void registroEspacioProducto(RegistroEspacioProductoDto registroEspacioProductoDto)
+    public EspacioProductoDto registroEspacioProducto(RegistroEspacioProductoDto registroEspacioProductoDto)
             throws ElementoNoEncontradoException, ElementoNoValidoException {
 
         // Mapear el espacio
         EspacioProducto espacioProducto = espacioProductoMapper.toEntity(registroEspacioProductoDto);
 
         // Asignamos la subBodega y el producto
-        SubBodega subBodega = subBodegaService.obtenerSubBodega(registroEspacioProductoDto.idSubBodega());
+        //SubBodega subBodega = subBodegaService.obtenerSubBodega(registroEspacioProductoDto.idSubBodega());
         Producto producto = productoService.obtenerProducto(registroEspacioProductoDto.idProducto());
 
         // Asignar relaciones
-        espacioProducto.setSubBodega(subBodega);
+        //espacioProducto.setSubBodega(subBodega);
         espacioProducto.setProducto(producto);
         producto.setEspacioProducto(espacioProducto); // sincroniza la relación inversa
 
         // Válida y agrega el espacio a la subBodega
-        subBodega.agregarEspacio(espacioProducto);
+        //subBodega.agregarEspacio(espacioProducto);
 
         // Se guarda el espacioProducto
         espacioProductoRepo.save(espacioProducto);
 
         // Se genera automáticamente una solicitud para abrir el Espacio
-        solicitudService.registrarSolicitudEspacio(espacioProducto,registroEspacioProductoDto);
+       // solicitudService.registrarSolicitudEspacio(espacioProducto,registroEspacioProductoDto);
+        return espacioProductoMapper.toDto(espacioProducto);
 
     }
 

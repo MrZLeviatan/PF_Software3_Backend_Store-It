@@ -15,7 +15,7 @@ public interface ProductoService {
 
 
     // Proceso del Gestor comercial para registrar un producto.
-    void registroProducto(RegistroProductoDto registroProducto)
+    ProductoDto registroProducto(RegistroProductoDto registroProducto)
             throws ElementoRepetidoException, ElementoNoEncontradoException,
             ElementoNoValidoException, ElementoNulosException;
 

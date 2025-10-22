@@ -28,7 +28,7 @@ public interface EspacioProductoMapper {
     @Mapping(target = "unidadAlmacenamiento", source = "unidadAlmacenamiento")
     @Mapping(target = "unidadAlmacenamiento.volumenOcupado", ignore = true)
     @Mapping(target = "unidadAlmacenamiento.estadoUnidad", constant = "DISPONIBLE")
-    @Mapping(target = "estadoEspacio", constant = "INACTIVO")
+    @Mapping(target = "estadoEspacio", constant = "ACTIVO")
     @Mapping(target = "solicitudes", expression = "java(new java.util.ArrayList<>())")
     @Mapping(target = "lotes", expression = "java(new java.util.ArrayList<>())")
     EspacioProducto toEntity(RegistroEspacioProductoDto espacioProductoDto);

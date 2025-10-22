@@ -10,7 +10,8 @@ import java.util.List;
 public interface ProveedorService {
 
 
-    void registrarProveedor(RegistroProveedorDto registroProveedorDto)
+    // Método para que el Gestor Comercial pueda guardar los proveedores relacionados a los productos.
+    ProveedorDto registrarProveedor(RegistroProveedorDto registroProveedorDto)
             throws ElementoNoValidoException, ElementoNulosException, ElementoRepetidoException, ElementoEliminadoException;
 
     Proveedor encontrarProveedor(Long idProveedor)

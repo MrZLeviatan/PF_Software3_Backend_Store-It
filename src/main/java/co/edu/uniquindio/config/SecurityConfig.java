@@ -56,9 +56,9 @@ public class SecurityConfig {
                         .hasAnyAuthority("ROLE_CLIENTE", "ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
                                 "ROLE_AUXILIAR_BODEGA", "ROLE_GESTOR_INVENTARIO", "ROLE_GESTOR_BODEGA")
 
+
                         // --- ENDPOINTS USADOS POR TODOS LOS EMPLEADOS ---
-                        .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**",
-                                "/api/espacio-producto/**",
+                        .requestMatchers("/api/proveedor/**", "/api/sub-bodega/**", "/api/espacio-producto/**",
                                 "/api/lote/**", "/api/notificaciones/**")
                         .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA",
                                 "ROLE_AUXILIAR_BODEGA", "ROLE_GESTOR_INVENTARIO", "ROLE_GESTOR_BODEGA")
