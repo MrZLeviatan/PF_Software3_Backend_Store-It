@@ -20,7 +20,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws") // URL del endpoint WebSocket
-                .setAllowedOriginPatterns("*") // Permite todas las conexiones (puedes restringir por dominio)
+                .setAllowedOriginPatterns("https://pfs3-storeit.web.app") // Permite todas las conexiones (puedes restringir por dominio)
                 .withSockJS(); // Permite compatibilidad con navegadores que no soportan WebSocket nativo
     }
 
