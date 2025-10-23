@@ -99,7 +99,7 @@ public class SecurityConfig {
 
         // Permitir solicitudes desde cualquier origen (corrección en producción)
         config.setAllowedOrigins(List.of(
-                "*"
+                "https://pfs3-storeit.web.app"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
