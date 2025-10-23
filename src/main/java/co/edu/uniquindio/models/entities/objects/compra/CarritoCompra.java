@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Comment;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -35,14 +36,14 @@ public class CarritoCompra {
     private Double totalValor;
 
     @OneToMany(mappedBy = "carritoCompra", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ItemsCarrito> itemsCarrito;
+    private List<ItemsCarrito> itemsCarrito = new ArrayList<>();
 
 
 
     // Método que recalcula automáticamente el total antes de insertar o actualizar la entidad
     @PrePersist
     @PreUpdate
-    private void calcularTotal() {
+    public void calcularTotal() {
         if (itemsCarrito != null && !itemsCarrito.isEmpty()) {
             totalValor = itemsCarrito.stream()
                     .mapToDouble(ItemsCarrito::getValorTotal)

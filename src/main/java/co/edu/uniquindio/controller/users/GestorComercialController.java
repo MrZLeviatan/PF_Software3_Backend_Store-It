@@ -28,17 +28,9 @@ public class GestorComercialController {
 
     // -------- Lotes -------------
 
-    private final LoteService loteService;
 
 
-    @PostMapping("/lotes/registrar")
-    public ResponseEntity<MensajeDto<String>> registrarLote(
-            @RequestBody @Valid RegistroLoteDto registroLoteDto)
-            throws ElementoNoEncontradoException, ElementoNoValidoException {
 
-        loteService.registroLote(registroLoteDto);
-        return ResponseEntity.ok().body(new MensajeDto<>(false,"Registro exitoso"));
-    }
 
 
 

@@ -52,7 +52,7 @@ public class LoteServiceImpl implements LoteService {
         loteRepo.save(lote);
 
         // 5. Creamos el movimiento de Ingreso
-        movimientoService.registroMovimientoIngreso(lote, registroLoteDto);
+       // movimientoService.registroMovimientoIngreso(lote, registroLoteDto);
     }
 
 

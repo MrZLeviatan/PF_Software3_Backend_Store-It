@@ -2,14 +2,14 @@ package co.edu.uniquindio.controller.objects.inventario;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.objects.inventario.lote.LoteDto;
+import co.edu.uniquindio.dto.objects.inventario.lote.RegistroLoteDto;
 import co.edu.uniquindio.exceptions.ElementoNoEncontradoException;
+import co.edu.uniquindio.exceptions.ElementoNoValidoException;
 import co.edu.uniquindio.service.objects.inventario.LoteService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,6 +20,16 @@ public class LoteController {
 
 
     private final LoteService loteService;
+
+
+    @PostMapping("/registrar")
+    public ResponseEntity<MensajeDto<String>> registrarLote(
+            @RequestBody @Valid RegistroLoteDto registroLoteDto)
+            throws ElementoNoEncontradoException, ElementoNoValidoException {
+
+        loteService.registroLote(registroLoteDto);
+        return ResponseEntity.ok().body(new MensajeDto<>(false,"Registro exitoso"));
+    }
 
     @GetMapping("/{idLote}")
     public ResponseEntity<MensajeDto<LoteDto>> obtenerLoteId(@PathVariable Long idLote)
