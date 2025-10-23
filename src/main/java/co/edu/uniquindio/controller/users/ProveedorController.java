@@ -2,10 +2,13 @@ package co.edu.uniquindio.controller.users;
 
 import co.edu.uniquindio.dto.MensajeDto;
 import co.edu.uniquindio.dto.users.proveedor.ProveedorDto;
+import co.edu.uniquindio.dto.users.proveedor.RegistroProveedorDto;
 import co.edu.uniquindio.exceptions.*;
 import co.edu.uniquindio.service.users.ProveedorService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,6 +20,19 @@ public class ProveedorController {
 
 
     private final ProveedorService proveedorService;
+
+
+    // Si no hay proveedor para registrar los productos
+    @PostMapping("/registrar")
+    @PreAuthorize("hasAnyAuthority('GESTOR_COMERCIAL')") // Solo permitido para el rol de Gestor Comercial
+    public ResponseEntity<MensajeDto<ProveedorDto>> registrarProveedor(
+            @Valid @RequestBody RegistroProveedorDto registroProveedorDto)
+            throws ElementoNoValidoException, ElementoRepetidoException, ElementoNulosException, ElementoEliminadoException {
+
+        ProveedorDto proveedorDto = proveedorService.registrarProveedor(registroProveedorDto);
+        return ResponseEntity.ok().body(new MensajeDto<>(false,proveedorDto));
+    }
+
 
 
     @GetMapping("/{idProveedor}")
@@ -35,12 +51,4 @@ public class ProveedorController {
         List<ProveedorDto> proveedores = proveedorService.listarProveedores();
         return ResponseEntity.ok().body(new MensajeDto<>(false,proveedores));
     }
-
-
-
-
-
-
-
-
 }

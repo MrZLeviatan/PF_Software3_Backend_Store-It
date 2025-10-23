@@ -8,8 +8,8 @@ import co.edu.uniquindio.models.entities.objects.almacen.EspacioProducto;
 
 public interface EspacioProductoService {
 
-
-    void registroEspacioProducto(RegistroEspacioProductoDto registroEspacioProductoDto)
+    // Mejorar ( por el momento dejaremos el espacio quemdado
+    EspacioProductoDto registroEspacioProducto(RegistroEspacioProductoDto registroEspacioProductoDto)
             throws ElementoNoEncontradoException, ElementoNoValidoException;
 
     EspacioProducto obtenerEspacioProductoId(Long idEspacioProducto)
@@ -18,6 +18,7 @@ public interface EspacioProductoService {
     EspacioProductoDto obtenerEspacioProductoDto(Long idEspacioProducto)
             throws ElementoNoEncontradoException;
 
+    // Se busca el espacio de un producto mediante Id dell producto, posteriormente se mapea el espacio
     EspacioProductoDto obtenerEspacioDelProducto(Long idProducto)
             throws ElementoNoEncontradoException;
 

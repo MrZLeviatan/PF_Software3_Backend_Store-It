@@ -13,8 +13,6 @@ public record RegistroProveedorDto(
 
         @NotBlank @Length(max = 15) String telefono,
 
-        @NotBlank String codigoPais,
-
         @NotBlank @Length(max = 100) String marca
 
 ) {

@@ -6,7 +6,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring", uses = {
-        EspacioProductoMapper.class
+        EspacioProductoMapper.class,
+        UnidadAlmacenamientoMapper.class
 })
 public interface SubBodegaMapper {
 

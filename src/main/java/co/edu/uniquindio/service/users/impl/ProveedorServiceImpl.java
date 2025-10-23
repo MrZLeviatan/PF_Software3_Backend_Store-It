@@ -27,22 +27,21 @@ public class ProveedorServiceImpl implements ProveedorService {
 
 
     @Override
-    public void registrarProveedor(RegistroProveedorDto registroProveedorDto)
+    public ProveedorDto registrarProveedor(RegistroProveedorDto registroProveedorDto)
             throws ElementoNoValidoException, ElementoNulosException, ElementoRepetidoException, ElementoEliminadoException {
 
-        // Formateamos el teléfono principal ( COD + Num /)
-        String telefonoFormateado = phoneService.obtenerTelefonoFormateado(
-                registroProveedorDto.telefono(),registroProveedorDto.codigoPais());
 
         // Validamos los correos y teléfonos no sean repetidos
         personaUtilService.validarEmailNoRepetido(registroProveedorDto.email());
-        personaUtilService.validarTelefonoNoRepetido(telefonoFormateado,null);
 
         // Se mapea el Proveedor
         Proveedor proveedor = proveedorMapper.toEntity(registroProveedorDto);
 
         // Se guarda en la base
         proveedorRepo.save(proveedor);
+
+        // Se devuelve el ProveedorDto
+        return proveedorMapper.toDto(proveedor);
     }
 
 

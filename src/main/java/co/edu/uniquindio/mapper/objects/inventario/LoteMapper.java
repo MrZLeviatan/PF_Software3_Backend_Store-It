@@ -24,10 +24,11 @@ public interface LoteMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "codigoLote", ignore = true)
     @Mapping(target = "fechaIngreso", expression = "java(java.time.LocalDate.now())")
-    @Mapping(target = "estadoLote", constant = "EN_VERIFICACION")
+    @Mapping(target = "estadoLote", constant = "ACTIVO")
     @Mapping(target = "valorTotal", ignore = true)
     @Mapping(target = "espacioProducto", ignore = true)
     @Mapping(target = "movimientos", expression = "java(new java.util.ArrayList<>())")
     @Mapping(target = "incidenteLotes", expression = "java(new java.util.ArrayList<>())")
+    @Mapping(target = "cantidadDisponible", source = "cantidadTotal")
     Lote toEntity(RegistroLoteDto registroLoteDto);
 }
