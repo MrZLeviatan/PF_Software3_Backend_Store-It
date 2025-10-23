@@ -43,10 +43,16 @@ public class JWTFilter extends OncePerRequestFilter {
         System.out.println("🔹 [JWTFilter] URL: " + requestURI); // Mostrar la URL que se está filtrando
 
         // 🔹 Rutas públicas: no requieren token
-        if (requestURI.startsWith("/api/auth/") || requestURI.startsWith("/api/store-it/")) {
+        // 🔹 Rutas públicas: no requieren token
+        if (requestURI.equals("/") ||
+                requestURI.startsWith("/error") ||
+                requestURI.startsWith("/api/auth/") ||
+                requestURI.startsWith("/api/store-it/")) {
+
             chain.doFilter(request, response);
             return;
         }
+
 
         // 🔹 Solo rutas protegidas: obtener token del header Authorization
         String token = getToken(request);
