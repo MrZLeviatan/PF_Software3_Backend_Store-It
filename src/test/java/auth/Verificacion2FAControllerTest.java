@@ -92,7 +92,7 @@ public class Verificacion2FAControllerTest {
     @Test
     void verificarLogin_Exitoso_DeberiaRetornar200() throws Exception {
         // Caso feliz: email y código correctos
-        mockMvc.perform(post("/api/auth/login-verificación")
+        mockMvc.perform(post("/api/auth/login/verificacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verificacionCodigoDto)))
                 .andExpect(status().isOk()) // Espera 200
@@ -105,7 +105,7 @@ public class Verificacion2FAControllerTest {
         // Caso: correo no registrado
         VerificacionCodigoDto dto = new VerificacionCodigoDto("noexiste@test.com", "123456");
 
-        mockMvc.perform(post("/api/auth/login-verificación")
+        mockMvc.perform(post("/api/auth/login/verificacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound()) // 404 por usuario inexistente
@@ -118,7 +118,7 @@ public class Verificacion2FAControllerTest {
         clienteBase.getUser().getCodigo().setClave("345678");
         clienteRepo.save(clienteBase);
 
-        mockMvc.perform(post("/api/auth/login-verificación")
+        mockMvc.perform(post("/api/auth/login/verificacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verificacionCodigoDto)))
                 .andExpect(status().isUnauthorized()) // 401 por credenciales incorrectas
@@ -132,12 +132,12 @@ public class Verificacion2FAControllerTest {
         clienteBase.getUser().getCodigo().setFechaExpiracion(LocalDateTime.now().minusMinutes(15));
         clienteRepo.save(clienteBase);
 
-        mockMvc.perform(post("/api/auth/login-verificación")
+        mockMvc.perform(post("/api/auth/login/verificacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verificacionCodigoDto)))
                 .andExpect(status().isUnauthorized()) // aquí podrías usar 401 o 410 dependiendo de tu diseño
                 .andExpect(jsonPath("$.error").value(true))
-                .andExpect(jsonPath("$.mensaje").value("El código proporcionado a expirado"));
+                .andExpect(jsonPath("$.mensaje").value("El código proporcionado ha expirado."));
     }
 
 }

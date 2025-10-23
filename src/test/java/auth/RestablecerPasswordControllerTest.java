@@ -102,7 +102,7 @@ public class RestablecerPasswordControllerTest {
     @Test
     void solicitarRestablecimientoPassword_Exitoso_DeberiaRetonar200() throws Exception {
         // Caso: usuario válido, debería enviar el email con el código
-        mockMvc.perform(post("/api/auth/restablecer-password")
+        mockMvc.perform(post("/api/auth/password/restablecer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(solicitudEmailDto)))
                 .andExpect(status().isOk())
@@ -116,7 +116,7 @@ public class RestablecerPasswordControllerTest {
         clienteBase.getUser().setEstadoCuenta(EstadoCuenta.INACTIVA);
         clienteRepo.save(clienteBase);
 
-        mockMvc.perform(post("/api/auth/restablecer-password")
+        mockMvc.perform(post("/api/auth/password/restablecer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(solicitudEmailDto)))
                 .andExpect(status().isIAmATeapot()) // código 418 usado para manejar este caso especial
@@ -130,12 +130,12 @@ public class RestablecerPasswordControllerTest {
         clienteBase.getUser().setEstadoCuenta(EstadoCuenta.ELIMINADO);
         clienteRepo.save(clienteBase);
 
-        mockMvc.perform(post("/api/auth/restablecer-password")
+        mockMvc.perform(post("/api/auth/password/restablecer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(solicitudEmailDto)))
                 .andExpect(status().isIAmATeapot())
                 .andExpect(jsonPath("$.error").value(true))
-                .andExpect(jsonPath("$.mensaje").value("La cuenta se encuentra eliminada."));
+                .andExpect(jsonPath("$.mensaje").value("La cuenta está eliminada, por favor comunicarse con un asesor"));
     }
 
     @Test
@@ -143,12 +143,12 @@ public class RestablecerPasswordControllerTest {
         // Caso: el email no corresponde a ningún usuario
         SolicitudEmailDto dto = new SolicitudEmailDto("correo_incorrecto@gmail.com");
 
-        mockMvc.perform(post("/api/auth/restablecer-password")
+        mockMvc.perform(post("/api/auth/password/restablecer")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value(true))
-                .andExpect(jsonPath("$.mensaje").value("Persona no encontrada o no registrada"));
+                .andExpect(jsonPath("$.mensaje").value("Persona con el email asociado no encontrado"));
     }
 
     // --------- TESTS PARA VERIFICAR EL CÓDIGO ---------
@@ -156,7 +156,7 @@ public class RestablecerPasswordControllerTest {
     @Test
     void verificarCodigoPassword_CodigoCorrecto_DeberiaRetornar200() throws Exception {
         // Caso exitoso: código válido
-        mockMvc.perform(post("/api/auth/verificar-codigo-restablecimiento-password")
+        mockMvc.perform(post("/api/auth/password/verificacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verificacionCodigoDto)))
                 .andExpect(status().isOk())
@@ -169,7 +169,7 @@ public class RestablecerPasswordControllerTest {
         // Caso: código ingresado no coincide
         verificacionCodigoDto = new VerificacionCodigoDto("cliente@test.com", "123ABC");
 
-        mockMvc.perform(post("/api/auth/verificar-codigo-restablecimiento-password")
+        mockMvc.perform(post("/api/auth/password/verificacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verificacionCodigoDto)))
                 .andExpect(status().isUnauthorized())
@@ -182,12 +182,12 @@ public class RestablecerPasswordControllerTest {
         // Caso: se intenta verificar un email inexistente
         verificacionCodigoDto = new VerificacionCodigoDto("correo_incorrecto@test.com", "123ABC");
 
-        mockMvc.perform(post("/api/auth/verificar-codigo-restablecimiento-password")
+        mockMvc.perform(post("/api/auth/password/verificacion")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(verificacionCodigoDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value(true))
-                .andExpect(jsonPath("$.mensaje").value("Persona no encontrada o no registrada"));
+                .andExpect(jsonPath("$.mensaje").value("Persona con el email asociado no encontrado"));
     }
 
     // --------- TESTS PARA ACTUALIZAR LA CONTRASEÑA ---------
@@ -195,7 +195,7 @@ public class RestablecerPasswordControllerTest {
     @Test
     void actualizarPassword_Exitoso_DeberiaRetornar200() throws Exception {
         // Caso exitoso: nueva contraseña válida
-        mockMvc.perform(put("/api/auth/actualizar-password")
+        mockMvc.perform(put("/api/auth/password/actualizar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(actualizarPasswordDto)))
                 .andExpect(status().isOk())
@@ -212,12 +212,12 @@ public class RestablecerPasswordControllerTest {
         // Caso: se intenta cambiar contraseña de un usuario inexistente
         actualizarPasswordDto = new ActualizarPasswordDto("email_Incorrecto@gmail.com","Password123");
 
-        mockMvc.perform(put("/api/auth/actualizar-password")
+        mockMvc.perform(put("/api/auth/password/actualizar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(actualizarPasswordDto)))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value(true))
-                .andExpect(jsonPath("$.mensaje").value("Persona no encontrada o no registrada"));
+                .andExpect(jsonPath("$.mensaje").value("Persona con el email asociado no encontrado"));
     }
 
     @Test
@@ -225,7 +225,7 @@ public class RestablecerPasswordControllerTest {
         // Caso: la nueva contraseña no cumple requisitos mínimos
         actualizarPasswordDto = new ActualizarPasswordDto("cliente@test.com","Pas");
 
-        mockMvc.perform(put("/api/auth/actualizar-password")
+        mockMvc.perform(put("/api/auth/password/actualizar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(actualizarPasswordDto)))
                 .andExpect(status().isBadRequest())
