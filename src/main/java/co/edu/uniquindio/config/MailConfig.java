@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MailConfig {
 
+    /**
     @Value("${smtp.host}")
     private String host;
 
@@ -41,10 +42,12 @@ public class MailConfig {
     private int readTimeoutMs;
 
 
+
     /*
      Crea y devuelve el bean Mailer configurado con las propiedades leídas.
      Este bean se inyectará en los servicios que envíen correos.
     */
+    /**
     @Bean
     public Mailer mailer() {
         // Construcción base del builder con servidor SMTP y credenciales
@@ -66,10 +69,12 @@ public class MailConfig {
         return builder.buildMailer();
     }
 
+
     /*
      Traduce la cadena de transporte a TransportStrategy de Simple Java Mail.
      Valores soportados: "SMTP", "SMTP_TLS", "SMTPS"
     */
+    /**
     private TransportStrategy mapTransport(String t) {
         if (t == null) return TransportStrategy.SMTP_TLS;
         switch (t.trim().toUpperCase()) {
@@ -82,4 +87,6 @@ public class MailConfig {
                 return TransportStrategy.SMTP_TLS;
         }
     }
+    **/
+
 }

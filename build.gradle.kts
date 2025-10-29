@@ -89,6 +89,8 @@ dependencies {
     // Simple Java Mail: Librería para enviar correos electrónicos.
     implementation("org.simplejavamail:simple-java-mail:8.12.5")
     implementation("org.simplejavamail:batch-module:8.12.5")
+    implementation("com.sendgrid:sendgrid-java:4.10.3")
+
 
     // libphonenumber: Librería para validación y formato de teléfonos con prefijo internacional.
     implementation("com.googlecode.libphonenumber:libphonenumber:8.13.30")
