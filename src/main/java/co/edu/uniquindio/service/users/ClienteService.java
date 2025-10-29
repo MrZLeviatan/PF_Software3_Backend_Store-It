@@ -27,7 +27,7 @@ public interface ClienteService {
     void verificacionCliente(VerificacionCodigoDto verificacionCodigoDto)
             throws ElementoNoEncontradoException, ElementoIncorrectoException, ElementoNoCoincideException;
 
-
+    // Verificación código mediante el Link del email enviado al Cliente.
     void verificacionClienteLink(String email, String codigo)
             throws ElementoNoEncontradoException, ElementoIncorrectoException, ElementoNoCoincideException;
 

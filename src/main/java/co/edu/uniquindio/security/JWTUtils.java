@@ -31,7 +31,6 @@ public class JWTUtils {
     private static final String SECRET = "store-it-secret-key-para-firmar-tokens-jwt-de-forma-segura";
 
 
-
     // Genera un token JWT con los datos proporcionados. Este token es utilizado para autenticar y autorizar al usuario en el sistema.
     public String generateToken(String id, Map<String, String> claims) {
 

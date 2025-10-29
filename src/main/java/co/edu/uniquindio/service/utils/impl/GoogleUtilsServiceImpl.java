@@ -16,7 +16,7 @@ import java.util.Collections;
 @Component
 public class GoogleUtilsServiceImpl implements GoogleUtilsService {
 
-    // ✅ Este es el CLIENT_ID que obtienes de Google Cloud Console
+    // Este es el CLIENT_ID que obtienes de Google Cloud Console
     @Value("${spring.security.oauth2.client.registration.google.client-id}")
     private String CLIENT_ID;
 
