@@ -69,7 +69,7 @@ public class SecurityConfig {
                         .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA")
 
                         // --- ENDPOINTS PARA EL CLIENTE
-                        .requestMatchers("/api/compra/**","api/carrito-compra/**")
+                        .requestMatchers("/api/compra/**","/api/carrito-compra/**")
                         .hasAnyAuthority("ROLE_CLIENTE")
 
                         // --- ENDPOINTS SOLO PARA GESTOR COMERCIAL ---
@@ -97,28 +97,31 @@ public class SecurityConfig {
     // Configuración de los CORS ( Cross - Origin Resource Sharing )
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        // Configura CORS (Cross-Origin Resource Sharing) para permitir solicitudes desde otros orígenes
-
         CorsConfiguration config = new CorsConfiguration();
 
-        // Permitir solicitudes desde cualquier origen (corrección en producción)
+        // 🌍 Orígenes permitidos (frontend en Firebase y pruebas locales)
         config.setAllowedOrigins(List.of(
-                "https://storeit2-77c20.web.app"
-        ));
+                "https://storeit2-77c20.web.app"));
 
+        // ✅ Permitir envío de cookies, tokens y cabeceras de autenticación
+        config.setAllowCredentials(true);
+
+        // ✅ Métodos HTTP permitidos
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        // Métodos HTTP permitidos
 
-        config.setAllowedHeaders(List.of("*"));
-        // Permite cualquier encabezado
+        // ✅ Cabeceras permitidas
+        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Accept", "Origin"));
 
+        // ✅ Cabeceras expuestas (para que el frontend pueda leerlas)
+        config.setExposedHeaders(List.of("Authorization"));
 
+        // 🔧 Registro de configuración para todos los endpoints
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-        // Aplica esta configuración a todas las rutas
 
         return source;
     }
+
 
 
 

@@ -50,7 +50,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-
+/**
         // Plantulla para crear Gestor Comercial
 
         GestorComercial gestorComercial = new GestorComercial();
@@ -144,5 +144,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
             System.err.println("❌ Error al agregar lote: " + e.getMessage());
 
  }
+
+ **/
     }
 }
