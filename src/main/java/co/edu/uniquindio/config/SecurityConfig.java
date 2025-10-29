@@ -68,6 +68,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/solicitud/**")
                         .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA")
 
+                        // --- ENDPOINTS PARA EL CLIENTE
+                        .requestMatchers("/api/compra/**","api/carrito-compra/**")
+                        .hasAnyAuthority("ROLE_CLIENTE")
+
                         // --- ENDPOINTS SOLO PARA GESTOR COMERCIAL ---
                         .requestMatchers("/api/gestor-comercial/**")
                         .hasAuthority("ROLE_GESTOR_COMERCIAL")
@@ -99,7 +103,7 @@ public class SecurityConfig {
 
         // Permitir solicitudes desde cualquier origen (corrección en producción)
         config.setAllowedOrigins(List.of(
-                "https://pfs3-storeit.web.app"
+                "https://storeit2-77c20.web.app"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

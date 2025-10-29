@@ -1,15 +1,20 @@
 package co.edu.uniquindio.constants;
 
 import co.edu.uniquindio.exceptions.ElementoNoValidoException;
+import co.edu.uniquindio.models.embeddable.DatosLaborales;
 import co.edu.uniquindio.models.embeddable.UnidadAlmacenamiento;
+import co.edu.uniquindio.models.embeddable.User;
 import co.edu.uniquindio.models.entities.objects.almacen.EspacioProducto;
 import co.edu.uniquindio.models.entities.objects.inventario.Lote;
 import co.edu.uniquindio.models.entities.objects.inventario.Producto;
+import co.edu.uniquindio.models.entities.users.GestorComercial;
 import co.edu.uniquindio.models.entities.users.Proveedor;
 import co.edu.uniquindio.models.enums.embeddable.EstadoUnidad;
+import co.edu.uniquindio.models.enums.embeddable.TipoRegistro;
 import co.edu.uniquindio.models.enums.entities.EstadoEspacioProducto;
 import co.edu.uniquindio.models.enums.entities.EstadoLote;
 import co.edu.uniquindio.models.enums.entities.TipoProducto;
+import co.edu.uniquindio.models.enums.users.EstadoCuenta;
 import co.edu.uniquindio.repository.objects.almacen.EspacioProductoRepo;
 import co.edu.uniquindio.repository.objects.inventario.LoteRepo;
 import co.edu.uniquindio.repository.objects.inventario.ProductoRepo;
@@ -47,7 +52,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
 
 
         // Plantulla para crear Gestor Comercial
-/**
+
         GestorComercial gestorComercial = new GestorComercial();
         gestorComercial.setNombre("Juan Carlos");
         gestorComercial.setTelefono("+57 3294688782");
@@ -73,9 +78,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
 
         gestorComercialRepo.save(gestorComercial);
 
- **/
 
-/**
 
         // Quemar datos producto
         Proveedor proveedor = new Proveedor();
@@ -119,11 +122,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
         // Guardar el espacio producto
         espacioProductoRepo.save(espacioProducto);
 
-**/
 
-/**
-
-        EspacioProducto  espacioProducto = espacioProductoRepo.findById(1L).orElseThrow();
 
         Lote lote = new Lote();
         lote.setCodigoLote("FFGHJ1-A2");
@@ -145,7 +144,5 @@ public class DatosInicialesRunner implements CommandLineRunner {
             System.err.println("❌ Error al agregar lote: " + e.getMessage());
 
  }
-
- **/
     }
 }

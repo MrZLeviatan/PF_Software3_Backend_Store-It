@@ -113,7 +113,7 @@ dependencies {
     implementation("io.micrometer:micrometer-registry-prometheus")
 
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation ("org.postgresql:postgresql:42.6.0")
+    implementation ("org.postgresql:postgresql:42.7.2")
 
     // Stripe SDK para Java
     implementation("com.stripe:stripe-java:24.10.0") // versión estable actual
