@@ -15,14 +15,18 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-
+/**
+ * Servicio encargado de gestionar la generación, validación y autenticación
+ * de códigos de verificación (2FA) y restablecimiento de contraseña.
+ */
 @Service
 @RequiredArgsConstructor
 public class CodigoServiceImpl implements CodigoService {
 
-
+    // Repositorio encargado de las operaciones de persistencia de entidades Persona.
     private final PersonaRepo personaRepo;
 
+    // Genera un código único de verificación 2FA con una duración limitada (15 minutos).
     @Override
     public Codigo generarCodigoVerificacion2AF() {
         Codigo codigoVerificacion = new Codigo();
@@ -32,7 +36,7 @@ public class CodigoServiceImpl implements CodigoService {
         return codigoVerificacion;
     }
 
-
+    // Genera un código único para restablecer contraseñas, válido por 15 minutos.
     @Override
     public Codigo generarCodigoRestablecerPassword() {
         Codigo codigoRestablecerPassword = new Codigo();
@@ -43,20 +47,21 @@ public class CodigoServiceImpl implements CodigoService {
     }
 
 
-
+    // Autentifica y valida un código de verificación proporcionado por el usuario.
     @Override
     public void autentificarCodigo(VerificacionCodigoDto verificacionCodigoDto)
             throws ElementoNoEncontradoException, ElementoNoCoincideException {
 
+        // 1. Busca persona asociada al email proporcionado
         Persona personaOpt = buscarPersonaPorEmail(verificacionCodigoDto.email());
 
 
-        // Verificar fecha de expiración
+        // 2. Verificar si el código ah expirado
         if (personaOpt.getUser().getCodigo().getFechaExpiracion().isBefore(LocalDateTime.now())) {
             throw new ElementoNoCoincideException("El código proporcionado ha expirado.");
         }
 
-        // Verificar coincidencia del código
+        // 3. Verificar coincidencia del código
         if (!personaOpt.getUser().getCodigo().getClave().equals(verificacionCodigoDto.codigo())) {
             throw new ElementoNoCoincideException("El código proporcionado no coincide");
         }
@@ -67,16 +72,18 @@ public class CodigoServiceImpl implements CodigoService {
     }
 
 
-    public Persona buscarPersonaPorEmail(String email) throws ElementoNoEncontradoException {
+    // Busca una persona en BD a su correo electrónico.
+    public Persona buscarPersonaPorEmail(String email)
+            throws ElementoNoEncontradoException {
         return personaRepo.findByUser_Email(email)
                 .orElseThrow(() -> new ElementoNoEncontradoException("Persona con el email asociado no encontrado"));
     }
 
-
+    //  Genera una clave aleatoria de 6 caracteres alfanuméricos.
     private String generacionClave() {
         return UUID.randomUUID().toString()
                 .replace("-", "")  // Eliminamos guiones para mayor limpieza
                 .substring(0, 6)   // Reducimos a 6 caracteres
-                .toUpperCase();
+                .toUpperCase();    // Convertimos a mayúsculas
     }
 }

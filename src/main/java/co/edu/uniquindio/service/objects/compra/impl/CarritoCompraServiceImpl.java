@@ -6,12 +6,17 @@ import co.edu.uniquindio.dto.objects.compras.itemCarrito.ModificarCantidadItemsD
 import co.edu.uniquindio.dto.objects.compras.itemCarrito.RegistroItemCompraDto;
 import co.edu.uniquindio.exceptions.ElementoNoEncontradoException;
 import co.edu.uniquindio.exceptions.ElementoNoValidoException;
+import co.edu.uniquindio.exceptions.ElementoRepetidoException;
 import co.edu.uniquindio.mapper.objects.compra.CarritoCompraMapper;
+import co.edu.uniquindio.models.entities.objects.almacen.EspacioProducto;
 import co.edu.uniquindio.models.entities.objects.compra.CarritoCompra;
 import co.edu.uniquindio.models.entities.objects.compra.ItemsCarrito;
+import co.edu.uniquindio.models.entities.objects.inventario.Lote;
 import co.edu.uniquindio.models.entities.objects.inventario.Producto;
 import co.edu.uniquindio.models.entities.users.Cliente;
+import co.edu.uniquindio.models.enums.entities.TipoProducto;
 import co.edu.uniquindio.repository.objects.compra.CarritoCompraRepo;
+import co.edu.uniquindio.repository.objects.inventario.LoteRepo;
 import co.edu.uniquindio.repository.objects.inventario.ProductoRepo;
 import co.edu.uniquindio.repository.users.ClienteRepo;
 import co.edu.uniquindio.service.objects.compra.CarritoCompraService;
@@ -21,6 +26,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,6 +38,7 @@ public class CarritoCompraServiceImpl implements CarritoCompraService {
     private final CarritoCompraMapper carritoCompraMapper;
     private final ProductoRepo productoRepo;
     private final ClienteRepo clienteRepo;
+    private final LoteRepo loteRepo;
 
 
     @Override
@@ -58,16 +66,18 @@ public class CarritoCompraServiceImpl implements CarritoCompraService {
     }
 
 
+
     @Override
     @Transactional
-    public void agregarProductoCarritoCompra(RegistroItemCompraDto registroItemCompraDto) throws ElementoNoEncontradoException {
+    public void agregarProductoCarritoCompra(RegistroItemCompraDto registroItemCompraDto)
+            throws ElementoNoEncontradoException, ElementoRepetidoException {
 
         // Obtener cliente
         Cliente cliente = clienteRepo.findById(registroItemCompraDto.
                 idCliente()).
                 orElseThrow(() -> new ElementoNoEncontradoException("Cliente no encontrado"));
 
-        // Verificar si el cliente ya tiene un carrito, sino crear uno
+        // Verificar si el cliente ya tiene un carrito, si no crear uno
         CarritoCompra carritoCompra = cliente.getCarritoCompra();
         if (carritoCompra == null) {
             carritoCompra = generarCarritoCliente(cliente);
@@ -86,9 +96,8 @@ public class CarritoCompraServiceImpl implements CarritoCompraService {
 
         ItemsCarrito itemCarrito;
         if (itemExistenteOpt.isPresent()) {
-            // Si ya existe el item, se aumenta la cantidad
-            itemCarrito = itemExistenteOpt.get();
-            itemCarrito.setCantidad(itemCarrito.getCantidad() + registroItemCompraDto.cantidad());
+            // Si ya existe el item, se envía una excepción de aviso
+            throw new ElementoRepetidoException("El producto ya se encuentra en tu carrito de compras");
         } else {
             // Si no existe, se crea un nuevo item
             itemCarrito = new ItemsCarrito();
@@ -106,25 +115,54 @@ public class CarritoCompraServiceImpl implements CarritoCompraService {
 
 
     @Override
-    public void agregarCantidadProductoCarrito(ModificarCantidadItemsDto agregarCantidadItemsDto)
+    public void modificarCantidadProductoCarrito(ModificarCantidadItemsDto modificarCantidadItemsDto)
             throws ElementoNoEncontradoException, ElementoNoValidoException {
 
         // Obtener cliente
-        Cliente cliente = clienteRepo.findById(agregarCantidadItemsDto.idCliente())
+        Cliente cliente = clienteRepo.findById(modificarCantidadItemsDto.idCliente())
                 .orElseThrow(() -> new ElementoNoEncontradoException("Cliente no encontrado"));
 
-        // Verificar si el cliente ya tiene un carrito, sino crear uno
+        // Verificar si el cliente ya tiene un carrito
         CarritoCompra carritoCompra = cliente.getCarritoCompra();
         if (carritoCompra == null) {
-            carritoCompra = generarCarritoCliente(cliente);
-            cliente.setCarritoCompra(carritoCompra);
+            throw new ElementoNoValidoException("Carrito no existente del Cliente");
         }
 
         // Buscar producto
-        Producto producto = productoRepo.findById(agregarCantidadItemsDto.idProducto())
+        Producto producto = productoRepo.findById(modificarCantidadItemsDto.idProducto())
                 .orElseThrow(() -> new ElementoNoEncontradoException("El producto no existe"));
 
-        // Verificar si el producto ya está en el carrito
+        // Verificar si el producto tiene un espacio asignado
+        EspacioProducto espacio = producto.getEspacioProducto();
+        if (espacio == null) {
+            throw new ElementoNoValidoException("El producto no tiene un espacio asignado");
+        }
+
+        // Se obtienen los lotes del espacio
+        List<Lote> lotes = espacio.getLotes();
+        if (lotes == null || lotes.isEmpty()) {
+            throw new ElementoNoValidoException("No existen lotes asociados al espacio del producto");
+        }
+
+        // Ordenas los lotes dependiendo del tipo de producto
+        if (producto.getTipoProducto() == TipoProducto.PERECEDEROS) {
+            lotes.sort(Comparator.comparing(Lote::getFechaVencimiento));
+        } else {
+            lotes.sort(Comparator.comparing(Lote::getFechaIngreso));
+        }
+
+        // Calcular cantidad total disponible en los lotes
+        int cantidadDisponible = lotes.stream()
+                .mapToInt(Lote::getCantidadDisponible)
+                .sum();
+
+        // Verificar si hay suficiente cantidad en stock / Verify if enough stock exists
+        int cantidadSolicitada = modificarCantidadItemsDto.cantidad();
+        if (cantidadSolicitada > cantidadDisponible) {
+            throw new ElementoNoValidoException("No hay suficiente cantidad disponible en inventario.");
+        }
+
+        //  Si hay stock suficiente, actualizamos la cantidad en el carrito
         Optional<ItemsCarrito> itemExistenteOpt = carritoCompra.getItemsCarrito()
                 .stream()
                 .filter(item -> item.getProducto().getId().equals(producto.getId()))
@@ -133,114 +171,47 @@ public class CarritoCompraServiceImpl implements CarritoCompraService {
         if (itemExistenteOpt.isPresent()) {
             ItemsCarrito itemCarrito = itemExistenteOpt.get();
 
-            // Verificar que el EspacioProducto tenga suficiente cantidad
-            int cantidadDisponible = producto.getEspacioProducto() != null ?
-                    producto.getEspacioProducto().getCantidadTotal() : 0;
-
-            if (cantidadDisponible < itemCarrito.getCantidad() + agregarCantidadItemsDto.cantidadAgregar()) {
-                throw new ElementoNoValidoException(
-                        "No hay suficiente cantidad disponible en el inventario para agregar este producto");
-            }
-
-            // Si hay suficiente, se aumenta la cantidad
-            itemCarrito.setCantidad(itemCarrito.getCantidad() + agregarCantidadItemsDto.cantidadAgregar());
-            itemCarrito.setValorTotal(producto.getValorVenta() * itemCarrito.getCantidad());
+            // Actualizar cantidad del carrito
+            itemCarrito.setCantidad(cantidadSolicitada);
 
             // Recalcular total del carrito
             carritoCompra.calcularTotal();
             carritoCompraRepo.save(carritoCompra);
-
-        } else {
-            throw new ElementoNoEncontradoException("El producto no existe en el carrito");
         }
+
     }
-
-
-
-    @Override
-    @Transactional
-    public void quitarCantidadProductoCarrito(ModificarCantidadItemsDto quitarCantidadItemsDto)
-            throws ElementoNoEncontradoException, ElementoNoValidoException {
-
-        // Obtener cliente
-        Cliente cliente = clienteRepo.findById(quitarCantidadItemsDto.idCliente())
-                .orElseThrow(() -> new ElementoNoEncontradoException("Cliente no encontrado"));
-
-        // Verificar si el cliente ya tiene un carrito, sino crear uno
-        CarritoCompra carritoCompra = cliente.getCarritoCompra();
-        if (carritoCompra == null) {
-            carritoCompra = generarCarritoCliente(cliente);
-            cliente.setCarritoCompra(carritoCompra);
-        }
-
-        // Buscar producto
-        Producto producto = productoRepo.findById(quitarCantidadItemsDto.idProducto())
-                .orElseThrow(() -> new ElementoNoEncontradoException("El producto no existe"));
-
-        // Verificar si el producto ya está en el carrito
-        Optional<ItemsCarrito> itemExistenteOpt = carritoCompra.getItemsCarrito()
-                .stream()
-                .filter(item -> item.getProducto().getId().equals(producto.getId()))
-                .findFirst();
-
-        if (itemExistenteOpt.isPresent()) {
-            ItemsCarrito itemCarrito = itemExistenteOpt.get();
-
-            // Verificar que no se intente quitar más de lo que hay
-            if (itemCarrito.getCantidad() < quitarCantidadItemsDto.cantidadAgregar()) {
-                throw new ElementoNoValidoException("No se puede quitar más de la cantidad total del producto");
-            }
-
-            // Disminuir la cantidad
-            itemCarrito.setCantidad(itemCarrito.getCantidad() - quitarCantidadItemsDto.cantidadAgregar());
-
-            // Recalcular el valor total del item
-            itemCarrito.setValorTotal(producto.getValorVenta() * itemCarrito.getCantidad());
-
-            // Recalcular el total del carrito
-            carritoCompra.calcularTotal();
-
-            // Guardar cambios en la base de datos
-            carritoCompraRepo.save(carritoCompra);
-
-        } else {
-            throw new ElementoNoEncontradoException("El producto no existe en el carrito");
-        }
-    }
-
-
 
 
 
     @Override
     @Transactional
     public void eliminarProductoCarritoCompra(EliminarItemsCarritoDto eliminarProductoCarritoDto) throws ElementoNoEncontradoException {
-        // 1️⃣ Obtener cliente
+        // Obtener cliente
         Cliente cliente = clienteRepo.findById(eliminarProductoCarritoDto.idCliente())
                 .orElseThrow(() -> new ElementoNoEncontradoException("Cliente no encontrado"));
 
-        // 2️⃣ Obtener carrito del cliente
+        // Obtener carrito del cliente
         CarritoCompra carritoCompra = cliente.getCarritoCompra();
         if (carritoCompra == null || carritoCompra.getItemsCarrito() == null || carritoCompra.getItemsCarrito().isEmpty()) {
             throw new ElementoNoEncontradoException("El carrito está vacío o no existe");
         }
 
-        // 3️⃣ Buscar el item en el carrito por id del producto
+        // Buscar el item en el carrito por ID del producto
         Optional<ItemsCarrito> itemExistenteOpt = carritoCompra.getItemsCarrito()
                 .stream()
                 .filter(item -> item.getProducto().getId().equals(eliminarProductoCarritoDto.idProducto()))
                 .findFirst();
 
         if (itemExistenteOpt.isPresent()) {
-            // 4️⃣ Si existe, se elimina del carrito
+            // Si existe, se elimina del carrito
             ItemsCarrito itemCarrito = itemExistenteOpt.get();
             carritoCompra.getItemsCarrito().remove(itemCarrito);
             itemCarrito.setCarritoCompra(null); // Desvincular la relación
 
-            // 5️⃣ Recalcular el total del carrito
+            //  Recalcular el total del carrito
             carritoCompra.calcularTotal();
 
-            // 6️⃣ Guardar cambios
+            // Guardar cambios
             carritoCompraRepo.save(carritoCompra);
         } else {
             throw new ElementoNoEncontradoException("El producto no existe en el carrito");

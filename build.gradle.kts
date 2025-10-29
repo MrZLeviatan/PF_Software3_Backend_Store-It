@@ -115,6 +115,10 @@ dependencies {
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation ("org.postgresql:postgresql:42.6.0")
 
+    // Stripe SDK para Java
+    implementation("com.stripe:stripe-java:24.10.0") // versión estable actual
+
+
 
 }
 

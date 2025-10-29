@@ -24,6 +24,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
+/**
+ * Servicio que maneja todas las operaciones relacionadas con el registro, verificación
+ * y autenticación de clientes dentro del sistema Store-It.
+ */
 @Service
 @RequiredArgsConstructor
 public class ClienteServiceImpl implements ClienteService {
@@ -40,10 +44,12 @@ public class ClienteServiceImpl implements ClienteService {
     private final CarritoCompraService carritoCompraService;
     private final CarritoCompraRepo carritoCompraRepo;
 
+    // Mapper y Repo
     private final ClienteMapper clienteMapper;
     private final ClienteRepo clienteRepo;
 
 
+    // Registro de cliente tradicional
     @Override
     public void registrarCliente(RegistroClienteDto registroClienteDto)
             throws ElementoNoValidoException, ElementoNulosException, ElementoRepetidoException, ElementoEliminadoException {

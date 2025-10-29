@@ -6,6 +6,7 @@ import co.edu.uniquindio.dto.objects.compras.itemCarrito.ModificarCantidadItemsD
 import co.edu.uniquindio.dto.objects.compras.itemCarrito.RegistroItemCompraDto;
 import co.edu.uniquindio.exceptions.ElementoNoEncontradoException;
 import co.edu.uniquindio.exceptions.ElementoNoValidoException;
+import co.edu.uniquindio.exceptions.ElementoRepetidoException;
 import co.edu.uniquindio.models.entities.objects.compra.CarritoCompra;
 import co.edu.uniquindio.models.entities.users.Cliente;
 
@@ -17,14 +18,12 @@ public interface CarritoCompraService {
 
     CarritoCompraDto obtenerCarritoCompraCliente(Long idCliente) throws ElementoNoEncontradoException;
 
+
     void agregarProductoCarritoCompra(RegistroItemCompraDto registroItemCompraDto)
-            throws ElementoNoEncontradoException;
+            throws ElementoNoEncontradoException, ElementoRepetidoException;
 
 
-    void agregarCantidadProductoCarrito(ModificarCantidadItemsDto agregarCantidadItemsDto)
-            throws ElementoNoEncontradoException, ElementoNoValidoException;
-
-    void quitarCantidadProductoCarrito(ModificarCantidadItemsDto quitarCantidadItemsDto)
+    void modificarCantidadProductoCarrito(ModificarCantidadItemsDto modificarCantidadItemsDto)
             throws ElementoNoEncontradoException, ElementoNoValidoException;
 
 

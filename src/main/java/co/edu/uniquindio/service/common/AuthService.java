@@ -30,7 +30,7 @@ public interface AuthService {
 
     // Verifica que el código ingresado para restablecer la contraseña sea válido
     void verificarCodigoPassword(VerificacionCodigoDto verificacionCodigoDto)
-            throws ElementoNoEncontradoException, ElementoNoValidoException, ElementoNoCoincideException;
+            throws ElementoNoEncontradoException, ElementoNoCoincideException;
 
     // Actualiza la contraseña del usuario
     void actualizarPassword(ActualizarPasswordDto actualizarPasswordDto)

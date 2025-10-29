@@ -15,31 +15,44 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Servicio de utilidades para la gestión y validación de personas dentro del sistema.
+ * <br>
+ * Incluye validaciones de email, teléfonos, y acciones auxiliares de registro y persistencia.
+ */
 @Service
 @RequiredArgsConstructor
 public class PersonaUtilServiceImpl implements PersonaUtilService {
 
+    // Repositorio encargado de las operaciones CRUD sobre la entidad Persona.
     private final PersonaRepo personaRepo;
+    // Servicio encargado del envío de correos electrónicos (verificación, recuperación, etc.)
     private final EmailService emailService;
+    // Servicio encargado de la generación y validación de códigos de verificación.
     private final CodigoService codigoService;
 
 
+    /**
+     * Verifica que un email no esté repetido ni asociado a una cuenta eliminada o activa.
+     * <br>
+     * Si el correo pertenece a una cuenta inactiva, reenvía un nuevo código de verificación.
+     */
     @Override
     public void validarEmailNoRepetido(String email) throws ElementoRepetidoException, ElementoEliminadoException {
 
-        // Buscar el correo en el repositorio genérico de Persona.
+        // 1. Buscar el correo en el repositorio genérico de Persona.
         Optional<Persona> personaOpt = personaRepo.findByUser_Email(email);
 
         if (personaOpt.isPresent()) {
             Persona persona = personaOpt.get();
-
             EstadoCuenta estadoCuenta = persona.getUser().getEstadoCuenta();
 
             switch (estadoCuenta) {
+                // Si el usuario fue eliminado
                 case ELIMINADO -> throw new ElementoEliminadoException("Email asociado a una cuenta eliminada");
-
+                // Si el usuario está activo
                 case ACTIVO -> throw new ElementoRepetidoException("Email asociado a una cuenta activada");
-
+                // Si la cuenta está inactiva
                 case INACTIVA -> {
                     // Si la cuenta está inactiva, genera y reenvía un nuevo código de verificación.
                     String verificacion = UUID.randomUUID()
@@ -52,6 +65,7 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
                     // Guarda el usuario actualizado con el nuevo código de verificación.
                     personaRepo.save(persona);
 
+                    // Enviar nuevo correo de verificación
                     EmailDto emailDto = new EmailDto(
                             persona.getUser().getEmail(),
                             verificacion,
@@ -60,6 +74,7 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
 
                     emailService.enviarEmailVerificacionRegistro(emailDto);
 
+                    // Se lanza una excepción para él avisó del reenvío del email.
                     throw new ElementoRepetidoException(
                             "La cuenta ya existe pero está inactiva. "
                                     + "Hemos enviado un nuevo código de verificación a tu correo."
@@ -68,11 +83,12 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
     }
 
 
+    // Verifica que los números telefónicos (principal y secundario) no estén asociados a otra cuenta activa.
     @Override
     public void validarTelefonoNoRepetido(String telefono, String telefonoSecundario)
             throws ElementoRepetidoException, ElementoNulosException, ElementoNoValidoException {
 
-        // Validamos que el telefono no sea nulo
+        // Validamos que el telefono no sea nulo o vacío
         if (telefono == null || telefono.isBlank()) {
             throw new ElementoNulosException("Teléfono no puede ser nulo o blank");
         }
@@ -87,6 +103,7 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
             existe = personaRepo.existsByTelefonoOrTelefonoSecundario(telefono, telefonoSecundario);
         }
 
+        //  Validar si alguno ya pertenece a otra cuenta activa
         if (existe) {
             Persona personaOpt = personaRepo.findByTelefono(telefono)
                     .or(() -> personaRepo.findByTelefonoSecundario(telefonoSecundario))
@@ -94,12 +111,13 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
 
             if (personaOpt != null &&
                     !personaOpt.getUser().getEstadoCuenta().equals(EstadoCuenta.ELIMINADO)) {
+                // Lanza la exceptión si el telefono ya esta asociado a una cuenta existente
                 throw new ElementoRepetidoException("Teléfono asociado a una cuenta eliminada");
             }
         }
     }
 
-
+    // Busca una persona en la base de datos según su correo electrónico.
     @Override
     public Persona buscarPersonaPorEmail(String email) throws ElementoNoEncontradoException {
         return personaRepo.findByUser_Email(email)
@@ -107,13 +125,14 @@ public class PersonaUtilServiceImpl implements PersonaUtilService {
     }
 
 
+    // Busca una persona en la base de datos según su ID.
     @Override
     public Persona buscarPersonaPorId(Long id) throws ElementoNoEncontradoException {
         return personaRepo.findById(id)
                 .orElseThrow(() -> new ElementoNoEncontradoException("Persona con el email asociado no encontrado"));
     }
 
-
+    // Guarda o actualiza una persona en la base de datos.
     @Override
     public void guardarPersonaBD(Persona persona) {
         personaRepo.save(persona);

@@ -5,13 +5,9 @@ import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-/** Este es un record de Java que sirve como un DTO (Data Transfer Object) para representar
-  la información de una ubicación geográfica.
- *
-  Su propósito es encapsular los datos de un país, una ciudad, y las coordenadas de
-  latitud y longitud. Las anotaciones de validación garantizan que los datos sean
-  correctos, especialmente para las coordenadas, que deben estar dentro de los
-  rangos geográficos válidos.
+/**
+ * Su propósito es encapsular los datos de un país, una ciudad, y las coordenadas de
+ * latitud y longitud.
  */
 public record UbicacionDto(
 

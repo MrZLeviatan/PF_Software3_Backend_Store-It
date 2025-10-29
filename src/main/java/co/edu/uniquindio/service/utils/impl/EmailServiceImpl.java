@@ -15,12 +15,17 @@ import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-
+/**
+ * Servicio encargado de manejar el envío de correos electronicos
+ * <br>
+ * Esta clase utiliza la librería <b>Simple Java Mail</b> para construir y enviar correos HTML,
+ * haciendo uso de plantillas almacenadas en el directorio <code>resources/templates</code>.
+ */
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
 
-    // Cliente de envío de correos (inyectado por Spring)
+    // Cliente SMTP responsable de enviar los correos electrónicos
     private final Mailer mailer;
 
     // Dirección de correo del remitente (configurada en application.properties)
@@ -35,6 +40,12 @@ public class EmailServiceImpl implements EmailService {
     @Value("${app.verification.base-url}")
     private String verificationBaseUrl;
 
+    /**
+     * Envía un correo electrónico de verificación de registro a un nuevo usuario.
+     * <br>
+     * Carga una plantilla HTML desde los recursos, reemplaza los placeholders por valores reales
+     * y envía el correo al destinatario de manera asíncrona.
+     */
     @Override
     @Async
     public void enviarEmailVerificacionRegistro(EmailDto emailDto) {
@@ -70,6 +81,8 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+
+    // Envía un correo de bienvenida o confirmación para usuarios registrados mediante Google OAuth.
     @Override
     @Async
     public void enviarEmailRegistroGoogle(EmailDto emailDto) {
@@ -93,6 +106,11 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    /**
+     * Envía un correo con un código dinámico (por ejemplo, para verificación 2FA o restablecimiento de contraseña).
+     * <br>
+     * Recibe la ruta del archivo HTML para adaptar la plantilla según el contexto.
+     */
     @Override
     @Async
     public void enviarEmailCodigo(EmailDto emailDto, String rutaHtml) {
@@ -116,14 +134,18 @@ public class EmailServiceImpl implements EmailService {
             mailer.sendMail(email);
 
         } catch (IOException e) {
+            // Manejo de errores si no se puede leer la plantilla
             throw new RuntimeException("Error al cargar la plantilla del correo", e);
         }
     }
 
     // Método auxiliar para cargar el contenido de un archivo HTML ubicado en resources
     private String loadHtmlTemplate(String path) throws IOException {
+        // Cargar archivo como recurso del classpath
         ClassPathResource resource = new ClassPathResource(path);
+        // Leer el contenido del archivo en bytes
         byte[] bytes = resource.getInputStream().readAllBytes();
+        // Retornar el contenido convertido a String (UTF-8)
         return new String(bytes, StandardCharsets.UTF_8);
     }
 

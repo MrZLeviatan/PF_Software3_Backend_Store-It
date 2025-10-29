@@ -4,7 +4,7 @@ public record ModificarCantidadItemsDto(
 
         Long idProducto,
         Long idCliente,
-        int cantidadAgregar
+        int cantidad
 
 ) {
 }
