@@ -50,7 +50,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-/**
+
         // Plantulla para crear Gestor Comercial
 
         GestorComercial gestorComercial = new GestorComercial();
@@ -77,7 +77,6 @@ public class DatosInicialesRunner implements CommandLineRunner {
         gestorComercial.setDatosLaborales(datosLaborales);
 
         gestorComercialRepo.save(gestorComercial);
-
 
 
         // Quemar datos producto
@@ -122,7 +121,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
         // Guardar el espacio producto
         espacioProductoRepo.save(espacioProducto);
 
-
+/**
 
         Lote lote = new Lote();
         lote.setCodigoLote("FFGHJ1-A2");
