@@ -47,7 +47,9 @@ public class JWTFilter extends OncePerRequestFilter {
         if (requestURI.equals("/") ||
                 requestURI.startsWith("/error") ||
                 requestURI.startsWith("/api/auth/") ||
-                requestURI.startsWith("/api/store-it/")) {
+                requestURI.startsWith("/api/store-it/") ||
+                requestURI.startsWith("/api/compra/webhook"))
+            {
 
             chain.doFilter(request, response);
             return;

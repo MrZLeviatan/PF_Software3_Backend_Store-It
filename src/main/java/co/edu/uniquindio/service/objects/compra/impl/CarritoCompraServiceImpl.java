@@ -14,6 +14,7 @@ import co.edu.uniquindio.models.entities.objects.compra.ItemsCarrito;
 import co.edu.uniquindio.models.entities.objects.inventario.Lote;
 import co.edu.uniquindio.models.entities.objects.inventario.Producto;
 import co.edu.uniquindio.models.entities.users.Cliente;
+import co.edu.uniquindio.models.enums.entities.EstadoLote;
 import co.edu.uniquindio.models.enums.entities.TipoProducto;
 import co.edu.uniquindio.repository.objects.compra.CarritoCompraRepo;
 import co.edu.uniquindio.repository.objects.inventario.LoteRepo;
@@ -87,6 +88,14 @@ public class CarritoCompraServiceImpl implements CarritoCompraService {
         // Buscar producto
         Producto producto = productoRepo.findById(registroItemCompraDto.idProducto())
                 .orElseThrow(() -> new ElementoNoEncontradoException("El producto no existe"));
+
+        // Ver si existen Lotes del Producto
+        EspacioProducto espacioProducto = producto.getEspacioProducto();
+        List<Lote> lotes = loteRepo.findByEspacioProductoAndEstadoLote(espacioProducto, EstadoLote.ACTIVO);
+
+        if (lotes.isEmpty()) {
+            throw new ElementoNoEncontradoException("No se puede agregar el producto, no hay lotes disponibles");
+        }
 
         // Verificar si el producto ya está en el carrito
         Optional<ItemsCarrito> itemExistenteOpt = carritoCompra.getItemsCarrito()

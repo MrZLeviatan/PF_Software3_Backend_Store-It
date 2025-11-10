@@ -16,8 +16,7 @@ public interface ProductoMapper {
     @Mapping(target = "idProveedor", source = "proveedor.id")
     ProductoDto toDto(Producto producto);
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "imagen", ignore = true)
+     @Mapping(target = "imagen", ignore = true)
     @Mapping(target = "proveedor", ignore = true)
     @Mapping(target = "espacioProducto", ignore = true)
     @Mapping(target = "valorVenta", ignore = true)

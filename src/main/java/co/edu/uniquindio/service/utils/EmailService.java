@@ -1,6 +1,8 @@
 package co.edu.uniquindio.service.utils;
 
 import co.edu.uniquindio.dto.common.email.EmailDto;
+import co.edu.uniquindio.models.entities.objects.compra.Factura;
+import co.edu.uniquindio.models.entities.users.Cliente;
 
 // Servicio para la gestión de envío de correos electrónicos en la aplicación.
 public interface EmailService {
@@ -13,5 +15,7 @@ public interface EmailService {
 
     // Envía un correo con un código de validación.
     void enviarEmailCodigo(EmailDto emailDto, String rutaHtml);
+
+    void enviarFacturaEmail(Cliente cliente, Factura factura);
 
 }

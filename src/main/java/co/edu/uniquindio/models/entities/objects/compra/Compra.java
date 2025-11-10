@@ -67,7 +67,7 @@ public class Compra {
 
     @PrePersist // Se ejecuta antes de insertar entidades en la base de datos
     @PreUpdate  // Se ejecuta antes de actualizar entidades en la base de datos.
-    private void calcularTotales() {
+    public void calcularTotales() {
         if (detalleCompra != null && !detalleCompra.isEmpty()) {
             // Suma todos los valores detalle
             subTotal = detalleCompra.stream()

@@ -19,7 +19,7 @@ import java.util.List;
 @Entity
 @Table(name = "detalle_compra")
 @Comment("Entidad que representa los detalles de una  compras por parte de los clientes")
-public class    DetalleCompra {
+public class DetalleCompra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

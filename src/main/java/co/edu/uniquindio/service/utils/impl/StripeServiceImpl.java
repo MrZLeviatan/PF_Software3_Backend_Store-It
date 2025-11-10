@@ -47,7 +47,7 @@ public class StripeServiceImpl implements StripeService {
                 .setSuccessUrl(successUrl)
                 .setCancelUrl(cancelUrl)
                 .addAllLineItem(lineItems)
-                .setClientReferenceId("Cliente ID: " + carrito.idCliente())
+                .setClientReferenceId(String.valueOf(carrito.idCliente()))
                 .build();
 
         // 🇺🇸 Create the checkout session

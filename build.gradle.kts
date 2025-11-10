@@ -120,10 +120,13 @@ dependencies {
     // Stripe SDK para Java
     implementation("com.stripe:stripe-java:24.10.0") // versión estable actual
 
+    implementation("com.itextpdf:itextpdf:5.5.13.3")
+    implementation("com.itextpdf.tool:xmlworker:5.5.13.3")
+
 
 
 }
 
-tasks.withType<Test> {
+tasks.test {
     useJUnitPlatform()
 }

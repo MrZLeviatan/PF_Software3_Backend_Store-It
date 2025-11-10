@@ -50,6 +50,8 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll() // Docs públicas
                         .requestMatchers("/api/auth/**").permitAll() // Login/registro públicos
                         .requestMatchers("/api/store-it/**").permitAll() // Público store-it
+                        .requestMatchers("/api/compra/webhook").permitAll() // ⚠️ Debe ir antes del patrón /api/compra/**
+
 
                         // ENDPOINTS para todos,
                         .requestMatchers("/api/producto/**")
@@ -101,7 +103,7 @@ public class SecurityConfig {
 
         // 🌍 Orígenes permitidos (frontend en Firebase y pruebas locales)
         config.setAllowedOrigins(List.of(
-                "https://storeit2-77c20.web.app"));
+                "http://localhost:4200"));
 
         // ✅ Permitir envío de cookies, tokens y cabeceras de autenticación
         config.setAllowCredentials(true);
@@ -110,7 +112,7 @@ public class SecurityConfig {
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
 
         // ✅ Cabeceras permitidas
-        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Accept", "Origin"));
+        config.setAllowedHeaders(List.of("Authorization", "Cache-Control", "Content-Type", "Accept", "Origin", "Stripe-Signature"));
 
         // ✅ Cabeceras expuestas (para que el frontend pueda leerlas)
         config.setExposedHeaders(List.of("Authorization"));
