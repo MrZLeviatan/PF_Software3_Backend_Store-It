@@ -12,7 +12,7 @@ public interface ProveedorService {
 
     // Método para que el Gestor Comercial pueda guardar los proveedores relacionados a los productos.
     ProveedorDto registrarProveedor(RegistroProveedorDto registroProveedorDto)
-            throws ElementoNoValidoException, ElementoNulosException, ElementoRepetidoException, ElementoEliminadoException;
+            throws ElementoRepetidoException, ElementoEliminadoException;
 
     Proveedor encontrarProveedor(Long idProveedor)
             throws ElementoNoEncontradoException;

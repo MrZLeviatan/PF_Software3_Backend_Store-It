@@ -4,6 +4,7 @@ import co.edu.uniquindio.models.entities.objects.inventario.Producto;
 import co.edu.uniquindio.models.enums.entities.TipoProducto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,6 +17,13 @@ public interface ProductoRepo extends JpaRepository<Producto, Long>, JpaSpecific
 
     // Se obtienen los productos con el mismo tipo de producto.
     List<Producto> findAllByTipoProducto(TipoProducto tipoProducto);
+
+    // Productos con mayor o menor cantidad en inventario
+    @Query("SELECT p FROM Producto p JOIN p.espacioProducto e ORDER BY e.cantidadTotal DESC")
+    List<Producto> findTopByCantidadTotalDesc();
+
+    @Query("SELECT p FROM Producto p JOIN p.espacioProducto e ORDER BY e.cantidadTotal ASC")
+    List<Producto> findTopByCantidadTotalAsc();
 
 
 }

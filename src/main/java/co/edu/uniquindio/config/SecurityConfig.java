@@ -67,7 +67,7 @@ public class SecurityConfig {
 
 
                         // --- ENDPOINTS COMPARTIDOS ENTRE GESTOR COMERCIAL Y ADMIN ---
-                        .requestMatchers("/api/solicitud/**")
+                        .requestMatchers("/api/solicitud/**","/api/dashboard/**")
                         .hasAnyAuthority("ROLE_GESTOR_COMERCIAL", "ROLE_ADMIN_BODEGA")
 
                         // --- ENDPOINTS PARA EL CLIENTE

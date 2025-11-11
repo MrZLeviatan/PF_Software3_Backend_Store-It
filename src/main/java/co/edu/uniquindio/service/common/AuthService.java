@@ -22,7 +22,7 @@ public interface AuthService {
 
     // Verifica el código enviado para completar el login (2FA o similar)
     TokenDto verificacionLogin(VerificacionCodigoDto verificacionLoginDto)
-            throws ElementoNoEncontradoException, ElementoNoValidoException, ElementoNoCoincideException;
+            throws ElementoNoEncontradoException, ElementoNoCoincideException;
 
     // Solicita el envío de un correo para restablecer la contraseña
     void solicitarRestablecimientoPassword(SolicitudEmailDto solicitudEmailDto)

@@ -28,7 +28,7 @@ public class ProveedorServiceImpl implements ProveedorService {
 
     @Override
     public ProveedorDto registrarProveedor(RegistroProveedorDto registroProveedorDto)
-            throws ElementoNoValidoException, ElementoNulosException, ElementoRepetidoException, ElementoEliminadoException {
+            throws ElementoRepetidoException, ElementoEliminadoException {
 
 
         // Validamos los correos y teléfonos no sean repetidos

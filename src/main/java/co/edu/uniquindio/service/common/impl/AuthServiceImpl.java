@@ -205,7 +205,7 @@ public class AuthServiceImpl implements AuthService {
      */
     @Override
     public TokenDto verificacionLogin(VerificacionCodigoDto verificacionLoginDto)
-            throws ElementoNoEncontradoException, ElementoNoValidoException, ElementoNoCoincideException {
+            throws ElementoNoEncontradoException, ElementoNoCoincideException {
 
         // 1. Buscar al usuario por su correo electrónico
         Persona personaOpt = personaUtilService.buscarPersonaPorEmail(verificacionLoginDto.email());
