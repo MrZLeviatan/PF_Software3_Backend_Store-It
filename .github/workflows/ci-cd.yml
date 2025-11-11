@@ -277,7 +277,7 @@ jobs:
   create_github_release:
     name: create GitHub Release
     runs-on: ubuntu-latest
-x    steps:
+    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
