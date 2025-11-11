@@ -214,58 +214,59 @@ jobs:
           IMAGE_REF: ${{ env.IMAGE_REF }}
         # Toma la imagen previamente generada
 
-      - name: Apply K8s manifests
-        run: |
-          echo "Using image: $IMAGE_REF"
 
-          # Copiar los manifests originales a una carpeta temporal
-          cp -r k8s k8s_ci
-  
-          # Reemplazar placeholder por el valor real de la imagen
-          sed -i "s|IMAGE_PLACEHOLDER|${IMAGE_REF}|g" k8s_ci/deployment.yaml
-  
-          echo "Deployment file after replacement:"
-          grep "image:" k8s_ci/deployment.yaml || echo "No image line found!"
-          cat k8s_ci/deployment.yaml
-  
-          # Aplicar los manifests al clúster KinD
-          kubectl apply -f k8s_ci/
-          kubectl rollout status deployment/storeit-backend --timeout=300s
-        env:
-          IMAGE_REF: ${{ env.IMAGE_REF }}
-        # Aplica el deployment y el service al clúster KinD
-
-      - name: Debug failed rollout (extended)
-        if: failure()
-        run: |
-          echo "📋 Checking pods status..."
-          kubectl get pods -n default
-          POD=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
-          echo "🔍 Describing pod $POD ..."
-          kubectl describe pod $POD
-          echo "📜 Showing last 100 logs from container..."
-          kubectl logs $POD --previous --tail=100 || kubectl logs $POD --tail=100
-
-      - name: Check rollout status and logs if fail
-        run: |
-          echo "⏳ Waiting for deployment rollout..."
-          if ! kubectl rollout status deployment/storeit-backend --timeout=300s; then
-            echo "🚨 Deployment failed. Showing pod logs:"
-            kubectl get pods -l app=storeit-backend
-            POD_NAME=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
-            echo "Logs from pod: $POD_NAME"
-            kubectl logs $POD_NAME
-            exit 1
-          fi
-
-      - name: Health Check (verify pod)
-        run: |
-          kubectl get pods
-          kubectl get svc
-          kubectl port-forward svc/storeit-backend-svc 8080:80 &
-          sleep 5
-          curl -f http://localhost:8080/actuator/health
-        # Verifica la salud del servicio desplegado en KinD
+#      - name: Apply K8s manifests
+#        run: |
+#          echo "Using image: $IMAGE_REF"
+#
+#          # Copiar los manifests originales a una carpeta temporal
+#          cp -r k8s k8s_ci
+#
+#          # Reemplazar placeholder por el valor real de la imagen
+#          sed -i "s|IMAGE_PLACEHOLDER|${IMAGE_REF}|g" k8s_ci/deployment.yaml
+#
+#          echo "Deployment file after replacement:"
+#          grep "image:" k8s_ci/deployment.yaml || echo "No image line found!"
+#          cat k8s_ci/deployment.yaml
+#
+#          # Aplicar los manifests al clúster KinD
+#          kubectl apply -f k8s_ci/
+#          kubectl rollout status deployment/storeit-backend --timeout=300s
+#        env:
+#          IMAGE_REF: ${{ env.IMAGE_REF }}
+#        # Aplica el deployment y el service al clúster KinD
+#
+#      - name: Debug failed rollout (extended)
+#        if: failure()
+#        run: |
+#          echo "📋 Checking pods status..."
+#          kubectl get pods -n default
+#          POD=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
+#          echo "🔍 Describing pod $POD ..."
+#          kubectl describe pod $POD
+#          echo "📜 Showing last 100 logs from container..."
+#          kubectl logs $POD --previous --tail=100 || kubectl logs $POD --tail=100
+#
+#      - name: Check rollout status and logs if fail
+#        run: |
+#          echo "⏳ Waiting for deployment rollout..."
+#          if ! kubectl rollout status deployment/storeit-backend --timeout=300s; then
+#            echo "🚨 Deployment failed. Showing pod logs:"
+#            kubectl get pods -l app=storeit-backend
+#            POD_NAME=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
+#            echo "Logs from pod: $POD_NAME"
+#            kubectl logs $POD_NAME
+#            exit 1
+#          fi
+#
+#      - name: Health Check (verify pod)
+#        run: |
+#          kubectl get pods
+#          kubectl get svc
+#          kubectl port-forward svc/storeit-backend-svc 8080:80 &
+#          sleep 5
+#          curl -f http://localhost:8080/actuator/health
+#        # Verifica la salud del servicio desplegado en KinD
 
 
 # Versión de despliegue
