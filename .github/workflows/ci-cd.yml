@@ -166,7 +166,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-      # Descarga el código del repositorio (para acceder a manifests)
+        # Descarga el código del repositorio (para acceder a manifests)
 
       - name: Set up KinD (Kubernetes in Docker)
         uses: engineerd/setup-kind@v0.5.0
@@ -190,7 +190,7 @@ jobs:
           IMAGE_REF=$(cat image_ref.txt)
           echo "IMAGE_REF value loaded: $IMAGE_REF"
           echo "IMAGE_REF=$IMAGE_REF" >> $GITHUB_ENV
-        # Carga la imagen
+        # Carga la imagen generada en el job anterior
 
       - name: Pull and load image into KinD
         run: |
@@ -205,7 +205,6 @@ jobs:
           kind load docker-image "$IMAGE_REF" --name kind
         # Descarga la imagen desde Docker Hub y la carga en el clúster KinD
 
-
       - name: Ensure IMAGE_REF variable is exported
         run: |
           echo "Exporting IMAGE_REF from environment..."
@@ -213,8 +212,7 @@ jobs:
           export IMAGE_REF=$IMAGE_REF
         env:
           IMAGE_REF: ${{ env.IMAGE_REF }}
-        # Toma la imagen anteriormente enviada
-
+        # Toma la imagen previamente generada
 
       - name: Apply K8s manifests
         run: |
@@ -222,21 +220,20 @@ jobs:
 
           # Copiar los manifests originales a una carpeta temporal
           cp -r k8s k8s_ci
-
+  
           # Reemplazar placeholder por el valor real de la imagen
           sed -i "s|IMAGE_PLACEHOLDER|${IMAGE_REF}|g" k8s_ci/deployment.yaml
-
+  
           echo "Deployment file after replacement:"
           grep "image:" k8s_ci/deployment.yaml || echo "No image line found!"
           cat k8s_ci/deployment.yaml
-
+  
           # Aplicar los manifests al clúster KinD
           kubectl apply -f k8s_ci/
           kubectl rollout status deployment/storeit-backend --timeout=300s
         env:
           IMAGE_REF: ${{ env.IMAGE_REF }}
-        # Aplica le kubernetes a la imagen localmente
-
+        # Aplica el deployment y el service al clúster KinD
 
       - name: Debug failed rollout (extended)
         if: failure()
@@ -249,17 +246,15 @@ jobs:
           echo "📜 Showing last 100 logs from container..."
           kubectl logs $POD --previous --tail=100 || kubectl logs $POD --tail=100
 
-
-
       - name: Check rollout status and logs if fail
         run: |
           echo "⏳ Waiting for deployment rollout..."
           if ! kubectl rollout status deployment/storeit-backend --timeout=300s; then
-          echo "🚨 Deployment failed. Showing pod logs:"
-          kubectl get pods -l app=storeit-backend
-          POD_NAME=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
-          echo "Logs from pod: $POD_NAME"
-          kubectl logs $POD_NAME
+            echo "🚨 Deployment failed. Showing pod logs:"
+            kubectl get pods -l app=storeit-backend
+            POD_NAME=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
+            echo "Logs from pod: $POD_NAME"
+            kubectl logs $POD_NAME
             exit 1
           fi
 
