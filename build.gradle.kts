@@ -5,6 +5,10 @@ plugins {
     id("org.springframework.boot") version "3.4.1"
     // Plugin para la gestión de dependencias en proyectos Spring.
     id("io.spring.dependency-management") version "1.1.7"
+    // Plugin de SonarQube para conectarse con SonarCloud
+    jacoco
+    // Plugin para conectar Gradle a SonarCloud
+    id("org.sonarqube") version "4.4.1.3373"
 }
 
 // Descripción basÍca del proyecto.
@@ -26,6 +30,38 @@ configurations {
     compileOnly {
         //  Asegura que los procesadores de anotaciones solo se incluyan en tiempo de compilación.
         extendsFrom(configurations.annotationProcessor.get())
+    }
+}
+
+// Configuración de JaCoCo
+configure<JacocoPluginExtension> {
+    toolVersion = "0.8.9"
+}
+
+// Configuración del reporte JaCoCo para SonarCloud
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)  // SonarCloud requiere el XML
+        html.required.set(true) // Reporte visual opcional
+    }
+}
+
+// Configuración de SonarQube / SonarCloud
+sonarqube {
+    properties {
+        // Se usan variables de entorno (provenientes de GitHub Secrets)
+        property("sonar.projectKey", System.getenv("SONAR_PROJECT_KEY"))
+        property("sonar.organization", System.getenv("SONAR_ORG"))
+        property("sonar.host.url", "https://sonarcloud.io")
+        property("sonar.token", System.getenv("SONAR_TOKEN"))
+
+        // Cobertura de código y análisis de rutas
+        property("sonar.java.coveragePlugin", "jacoco")
+        property("sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacoco/test/jacocoTestReport.xml")
+
+        // Directorio de fuente y de pruebas
+        //property("sonar.sources", "src/main/java")
+
     }
 }
 
@@ -129,4 +165,5 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+    finalizedBy(tasks.jacocoTestReport)
 }
