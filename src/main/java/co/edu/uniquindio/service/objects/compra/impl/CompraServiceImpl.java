@@ -57,13 +57,13 @@ public class CompraServiceImpl implements CompraService {
                 generarCompraCliente(idCliente);
 
             } catch (NumberFormatException e) {
-                System.err.println("❌ clientReferenceId no es un número válido: " + clienteId);
+                System.err.println("clientReferenceId no es un número válido: " + clienteId);
             } catch (Exception e) {
                 e.printStackTrace();
-                System.err.println("⚠️ Error al registrar la compra del cliente " + clienteId + ": " + e.getMessage());
+                System.err.println("Error al registrar la compra del cliente " + clienteId + ": " + e.getMessage());
             }
         } else {
-            System.out.println("💤 Pago no completado, no se genera la compra.");
+            System.out.println("Pago no completado, no se genera la compra.");
         }
     }
 
