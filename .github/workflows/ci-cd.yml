@@ -232,7 +232,7 @@ jobs:
 
           # Aplicar los manifests al clúster KinD
           kubectl apply -f k8s_ci/
-          kubectl rollout status deployment/vitalapp-backend --timeout=300s
+          kubectl rollout status deployment/storeit-backend --timeout=300s
         env:
           IMAGE_REF: ${{ env.IMAGE_REF }}
         # Aplica le kubernetes a la imagen localmente
@@ -243,7 +243,7 @@ jobs:
         run: |
           echo "📋 Checking pods status..."
           kubectl get pods -n default
-          POD=$(kubectl get pods -l app=vitalapp-backend -o jsonpath="{.items[0].metadata.name}")
+          POD=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
           echo "🔍 Describing pod $POD ..."
           kubectl describe pod $POD
           echo "📜 Showing last 100 logs from container..."
@@ -254,10 +254,10 @@ jobs:
       - name: Check rollout status and logs if fail
         run: |
           echo "⏳ Waiting for deployment rollout..."
-          if ! kubectl rollout status deployment/vitalapp-backend --timeout=300s; then
+          if ! kubectl rollout status deployment/storeit-backend --timeout=300s; then
           echo "🚨 Deployment failed. Showing pod logs:"
-          kubectl get pods -l app=vitalapp-backend
-          POD_NAME=$(kubectl get pods -l app=vitalapp-backend -o jsonpath="{.items[0].metadata.name}")
+          kubectl get pods -l app=storeit-backend
+          POD_NAME=$(kubectl get pods -l app=storeit-backend -o jsonpath="{.items[0].metadata.name}")
           echo "Logs from pod: $POD_NAME"
           kubectl logs $POD_NAME
             exit 1
@@ -267,7 +267,7 @@ jobs:
         run: |
           kubectl get pods
           kubectl get svc
-          kubectl port-forward svc/vitalapp-backend-svc 8080:80 &
+          kubectl port-forward svc/storeit-backend-svc 8080:80 &
           sleep 5
           curl -f http://localhost:8080/actuator/health
         # Verifica la salud del servicio desplegado en KinD
