@@ -1,42 +1,43 @@
-# Etapa 1: Build
 
-## Imagen base con Gradle y Java 21 para compilar el proyecto
+# Imagen base con Gradle y Java 21 para compilar el proyecto
 FROM gradle:8.9-jdk21 AS builder
 
 # Directorio de trabajo dentro del contenedor
 WORKDIR /app
 
-#Copia todo el contenido del proyecto al contenedor
+# Copia todo el contenido del proyecto al contenedor / Copy all project files
 COPY . .
 
-#Ejecuta la construcción del proyecto ( sin pruebas para acelear el proceso ( anteriormente se hizo ))
+# Ejecuta la construcción del proyecto sin pruebas
 RUN gradle clean build -x test
 
-# Etapa 2: Runtime
 
-# Imagen de runtime para el JAR de Spring Boot
-## Le dice a Docker que parta desde una imagen Java 21 JDK instalado en una versión ligera de Debian.
-FROM openjdk:21-jdk-slim
+# ===============================
+# 🚀 Etapa 2: Runtime
+# ===============================
 
-# Crear usuario no-root por segurodad
-# Permite el no acceso al sistema host
+# Imagen ligera y estable con JDK 21 (reemplaza openjdk:21-jdk-slim)
+FROM eclipse-temurin:21-jdk-jammy
+
+# Crear usuario no-root por seguridad
 RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
 
-# Crear directorio para la aplicación
+# Crear directorio de trabajo
 WORKDIR /app
 
-# Usar el jar generado por Gradle
+# Copiar el artefacto JAR desde la etapa anterior
 COPY --from=builder /app/build/libs/*.jar /app/app.jar
 
-# Darle propiedad al archivo y cambiar a un usuario no-root
+# Asignar permisos al usuario
 RUN chown appuser:appgroup /app/app.jar
-# Todas las instrucciones las ejecutarán como appuser
+
+# Cambiar al usuario no-root
 USER appuser
 
-# Exponer el puerto 8080 usado por SpringBoot
+# Exponer el puerto 8080
 EXPOSE 8080
 
-# Ejecuta la aplicación automaticamente cuando el contenedor inicie.
+# Ejecutar la aplicación
 ENTRYPOINT ["sh", "-c", "exec java ${JAVA_OPTS:-} -jar /app/app.jar"]
 
 
