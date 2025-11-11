@@ -1,0 +1,21 @@
+# Kubernetes Service para el backend StoreIt
+
+apiVersion: v1                  # Versión de la API usada para crear un Service
+kind: Service                   # Tipo de recurso
+
+metadata:
+  name: storeit-backend-svc    # Nombre del servicio dentro del cluster
+  labels:
+    app: storeit-backend       # Etiqueta que relaciona este servicio con el Deployment
+
+spec:
+  selector:
+    app: storeit-backend       # Selecciona pods que tengan esta etiqueta
+
+  ports:
+    - protocol: TCP             # Protocolo de red (por defecto TCP)
+      port: 80                  # Puerto "externo" dentro del cluster (a donde apuntan otros servicios)
+      targetPort: 8080          # Puerto dentro del contenedor
+
+  type: ClusterIP               # Tipo de servicio (solo accesible dentro del cluster)
+  # Usamos ClusterIP porque KinD no crea LoadBalancers externos.

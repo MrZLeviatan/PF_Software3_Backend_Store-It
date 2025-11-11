@@ -1,0 +1,41 @@
+# Kubernetes Deployment para el backend Store It
+
+apiVersion: apps/v1 # Versión de la API para el recurso Deployment
+kind: Deployment    # Tipo de objeto que vamos a crear
+metadata:
+  name: storeit-backend  # Nombre del deployment
+  labels:
+    app: storeit-backend # Label común que asocia este deployment con un Service
+spec:
+  replicas: 1 # Número de réplicas (pods iguales que se lanzarán)
+  selector:   # Define qué pods serán manejados por este Deployment
+    matchLabels:
+      app: storeit-backend
+  template:
+    metadata:
+      labels:
+        app: storeit-backend # Etiqueta que vincula el Pod con el Service
+    spec:
+      containers:
+        - name: storeit-backend  # Nombre del contenedor
+          image: IMAGE_PLACEHOLDER
+          imagePullPolicy: IfNotPresent # Solo descargar la imagen si no está localmente
+          ports:
+            - containerPort: 8080
+          livenessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 120     # Espera 2 minutos antes del primer chequeo
+            periodSeconds: 30            # Intervalo más relajado
+            timeoutSeconds: 10           # Da más tiempo para responder
+            failureThreshold: 5          # Tolera 5 fallos antes de reiniciar
+
+          readinessProbe:
+            httpGet:
+              path: /actuator/health
+              port: 8080
+            initialDelaySeconds: 100     # Espera 1:40 antes del primer chequeo
+            periodSeconds: 20
+            timeoutSeconds: 10
+            failureThreshold: 5
