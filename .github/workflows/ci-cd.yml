@@ -275,26 +275,28 @@ jobs:
     needs: build_and_publish_image
 
     steps:
-      # Descargar el código
+      # 1️⃣ Descargar el código
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # 2️⃣ Autenticación con la Service Account (clave JSON en GCP_SAY_KEY)
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SAY_KEY }}
 
-      # 2️⃣ Guardar la llave JSON del Service Account como archivo temporal
-      - name: Save GCP credentials file
-        run: |
-          echo "${{ secrets.GCP_SAY_KEY }}" > $HOME/gcp-key.json
-
-
-      # 3️⃣ Configurar el SDK de Google Cloud con la llave
+      # 3️⃣ Instalar y configurar gcloud
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key_file: $HOME/gcp-key.json
           project_id: ${{ secrets.GCP_PROJECT_ID }}
-          export_default_credentials: true
 
-      # 4️⃣ Construir y subir la imagen Docker a Artifact Registry
+      # 4️⃣ Autenticarse con Artifact Registry para Docker
+      - name: Configure Docker auth for Artifact Registry
+        run: |
+          gcloud auth configure-docker ${{ secrets.GCP_REGION }}-docker.pkg.dev --quiet
+
+      # 5️⃣ Construir y subir la imagen
       - name: Build and push Docker image to Artifact Registry
         run: |
           IMAGE_NAME="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/storeit-backend-repo/storeit-backend:${GITHUB_SHA}"
@@ -302,7 +304,7 @@ jobs:
           docker push $IMAGE_NAME
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
-      # 5️⃣ Desplegar la imagen en Cloud Run
+      # 6️⃣ Desplegar en Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy storeit-backend \
@@ -311,10 +313,9 @@ jobs:
             --platform managed \
             --allow-unauthenticated \
             --port 8080
+  
 
-
-
-# Versión de despliegue
+  # Versión de despliegue
   create_github_release:
     name: create GitHub Release
     runs-on: ubuntu-latest
