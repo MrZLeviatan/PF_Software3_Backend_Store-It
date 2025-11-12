@@ -156,6 +156,10 @@ public class ClienteServiceImpl implements ClienteService {
         // Se agrega el password encriptado
         cliente.getUser().setPassword(passwordEncoder.encode(registroClienteGoogleDto.password()));
 
+        // Se genera un carrito de compra y se alistan
+        CarritoCompra carritoCompra = carritoCompraService.generarCarritoCliente(cliente);
+        cliente.setCarritoCompra(carritoCompra);
+
         // Se envia la notificación al Correo del Registro y Verificación Exitoso
         EmailDto emailDto = new EmailDto(
                 cliente.getUser().getEmail(),
