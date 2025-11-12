@@ -156,9 +156,6 @@ public class ClienteServiceImpl implements ClienteService {
         // Se agrega el password encriptado
         cliente.getUser().setPassword(passwordEncoder.encode(registroClienteGoogleDto.password()));
 
-        // Se genera un carrito de compra y se alistan
-        CarritoCompra carritoCompra = carritoCompraService.generarCarritoCliente(cliente);
-        cliente.setCarritoCompra(carritoCompra);
 
         // Se envia la notificación al Correo del Registro y Verificación Exitoso
         EmailDto emailDto = new EmailDto(
@@ -167,6 +164,15 @@ public class ClienteServiceImpl implements ClienteService {
                 "Bienvenido a Store-It - Gestión de Bodegas");
         emailService.enviarEmailRegistroGoogle(emailDto);
 
+        clienteRepo.save(cliente);
+
+
+        // Se genera un carrito de compra y se alistan
+        CarritoCompra carritoCompra = carritoCompraService.generarCarritoCliente(cliente);
+        cliente.setCarritoCompra(carritoCompra);
+
+        // Se guarda primero el carrito, luego el cliente (para evitar detached entities)
+        carritoCompraRepo.save(carritoCompra);
         clienteRepo.save(cliente);
     }
 
