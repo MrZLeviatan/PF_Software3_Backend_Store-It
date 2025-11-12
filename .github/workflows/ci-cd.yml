@@ -279,24 +279,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Debug GCP secret
-        run: |
-          if [ -z "${{ secrets.GCP_SAY_KEY }}" ]; then
-            echo "❌ Secret GCP_SA_KEY no está definido"
-            exit 1
-          else
-            echo "✅ Secret GCP_SA_KEY encontrado"
-          fi
 
-      # Configurar gcloud con tu Service Account
+      # 2️⃣ Guardar la llave JSON del Service Account como archivo temporal
+      - name: Save GCP credentials file
+        run: |
+          echo "${{ secrets.GCP_SAY_KEY }}" > $HOME/gcp-key.json
+
+
+      # 3️⃣ Configurar el SDK de Google Cloud con la llave
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key: ${{ secrets.GCP_SAY_KEY }}
+          service_account_key_file: $HOME/gcp-key.json
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           export_default_credentials: true
 
-      # Construir y subir la imagen Docker
+      # 4️⃣ Construir y subir la imagen Docker a Artifact Registry
       - name: Build and push Docker image to Artifact Registry
         run: |
           IMAGE_NAME="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/storeit-backend-repo/storeit-backend:${GITHUB_SHA}"
@@ -304,7 +302,7 @@ jobs:
           docker push $IMAGE_NAME
           echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
 
-      # Desplegar en Cloud Run
+      # 5️⃣ Desplegar la imagen en Cloud Run
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy storeit-backend \
