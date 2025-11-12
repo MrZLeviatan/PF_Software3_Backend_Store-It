@@ -31,8 +31,8 @@ public class CompraController {
     @PostMapping("/crear-sesion-pago")
     public ResponseEntity<?> crearSesion(@RequestBody CarritoCompraDto carrito) throws StripeException {
             // URLs de éxito y cancelación (ajusta a tus rutas en frontend)
-        String successUrl = "http://localhost:4200/cliente/productos";
-        String cancelUrl = "http://localhost:4200/cliente/carrito-compra";
+        String successUrl = "https://storeit2-77c20.web.app/cliente/productos";
+        String cancelUrl = "https://storeit2-77c20.web.app/cliente/carrito-compra";
 
 
         String checkoutUrl = stripeService.crearSesionCheckout(carrito, successUrl, cancelUrl);
@@ -40,6 +40,7 @@ public class CompraController {
     }
 
 
+    
     @PostMapping("/webhook")
     public ResponseEntity<String> manejarEventoStripe(
             @RequestBody String payload,
