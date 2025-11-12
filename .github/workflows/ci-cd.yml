@@ -269,11 +269,49 @@ jobs:
 #        # Verifica la salud del servicio desplegado en KinD
 
 
+  deploy_to_gcp:
+    name: Deploy to Google Cloud Run
+    runs-on: ubuntu-latest
+    needs: build_and_publish_image
+
+    steps:
+      # Descargar el código
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Configurar gcloud con tu Service Account
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          export_default_credentials: true
+
+      # Construir y subir la imagen Docker
+      - name: Build and push Docker image to Artifact Registry
+        run: |
+          IMAGE_NAME="${{ secrets.GCP_REGION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/storeit-backend-repo/storeit-backend:${GITHUB_SHA}"
+          docker build -t $IMAGE_NAME .
+          docker push $IMAGE_NAME
+          echo "IMAGE_NAME=$IMAGE_NAME" >> $GITHUB_ENV
+
+      # Desplegar en Cloud Run
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy storeit-backend \
+            --image $IMAGE_NAME \
+            --region ${{ secrets.GCP_REGION }} \
+            --platform managed \
+            --allow-unauthenticated \
+            --port 8080
+
+
+
 # Versión de despliegue
   create_github_release:
     name: create GitHub Release
     runs-on: ubuntu-latest
-    needs: deploy_with_kind
+    needs: deploy_to_gcp
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
