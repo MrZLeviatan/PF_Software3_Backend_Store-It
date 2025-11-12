@@ -50,7 +50,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
     @Transactional
     public void run(String... args) throws Exception {
 
-
+/**
 
         // Plantulla para crear Gestor Comercial
 
@@ -79,7 +79,7 @@ public class DatosInicialesRunner implements CommandLineRunner {
 
         gestorComercialRepo.save(gestorComercial);
 
-/**
+
         // Quemar datos producto
         Proveedor proveedor = new Proveedor();
         proveedor.setNombre("HomeCenter");
