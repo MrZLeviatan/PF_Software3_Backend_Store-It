@@ -279,11 +279,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Debug GCP secret
+        run: |
+          if [ -z "${{ secrets.GCP_SAY_KEY }}" ]; then
+            echo "❌ Secret GCP_SA_KEY no está definido"
+            exit 1
+          else
+            echo "✅ Secret GCP_SA_KEY encontrado"
+          fi
+
       # Configurar gcloud con tu Service Account
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
         with:
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          service_account_key: ${{ secrets.GCP_SAY_KEY }}
           project_id: ${{ secrets.GCP_PROJECT_ID }}
           export_default_credentials: true
 
