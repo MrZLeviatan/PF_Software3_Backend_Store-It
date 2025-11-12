@@ -103,7 +103,7 @@ public class SecurityConfig {
 
         // 🌍 Orígenes permitidos (frontend en Firebase y pruebas locales)
         config.setAllowedOrigins(List.of(
-                "http://localhost:4200"));
+                "http://localhost:4200", "https://pfs3-storeit.web.app"));
 
         // ✅ Permitir envío de cookies, tokens y cabeceras de autenticación
         config.setAllowCredentials(true);
